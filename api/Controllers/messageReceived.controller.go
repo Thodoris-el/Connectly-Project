@@ -10,6 +10,7 @@ import (
 )
 
 func HandleMessenger(resp http.ResponseWriter, request *http.Request) {
+	//Read the body of the request received
 	body, err := ioutil.ReadAll(request.Body)
 	if err != nil {
 		log.Printf("failed to read body: %v", err)
@@ -23,11 +24,13 @@ func HandleMessenger(resp http.ResponseWriter, request *http.Request) {
 		resp.Write([]byte("Error while unmarshal request"))
 		return
 	}
+
 	if facebookPost.Object != "page" {
 		log.Panicln("No fb object page")
 		resp.WriteHeader(400)
 		resp.Write([]byte("No fb object page"))
 	}
+
 	fbEntry := facebookPost.Entry
 	var fbMess []entity.MessagingType
 	for _, everyEntry := range fbEntry {

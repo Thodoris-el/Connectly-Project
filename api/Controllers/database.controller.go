@@ -30,7 +30,7 @@ func (server *Server) Initialize(Db_user, Db_password, Db_host, Db_name, Db_port
 		log.Println("Connected to mysql database")
 	}
 
-	server.DB.Debug().AutoMigrate(&entity.Customer{})
+	server.DB.Debug().AutoMigrate(&entity.Customer{}, &entity.Review{})
 	server.Router = mux.NewRouter()
 	server.startRoutes()
 }

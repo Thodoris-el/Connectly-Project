@@ -22,7 +22,7 @@ func (customer *Customer) SaveCustomer(db *gorm.DB) (*Customer, error) {
 
 	err := db.Debug().Create(&customer).Error
 	if err != nil {
-		log.Println("error while saving user")
+		log.Println("error while saving customer")
 		return &Customer{}, err
 	}
 
