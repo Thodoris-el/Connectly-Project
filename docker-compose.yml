@@ -1,0 +1,54 @@
+version: '3'
+services:
+  app:
+    container_name: connectly_project
+    build: .
+    ports:
+      - 8000:8000
+    restart: on-failure
+    volumes:
+      - api:/usr/src/app
+    depends_on:
+      - connectly_mysql
+    networks:
+      - backend
+
+  connectly_mysql:
+    image: mysql:5.7
+    container_name: connectly_db_mysql
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_HOST=${DB_HOST}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MY_SQL_DATABASE=${DB_NAME}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - database_mysql:/var/lib/mysql
+    networks:
+      - backend
+    
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin_conatiner
+    depends_on:
+      - connectly_mysql
+    environment:
+      - PMA_HOST=connectly_mysql
+      - PMA_USER=${DB_USER}
+      - PMA_PORT=${DB_PORT}
+      - PMA_PASSWORD=${DB_PASSWORD}
+    ports:
+      - 9090:80
+    restart: always
+    networks:
+      - backend
+
+volumes:
+  api:
+  database_mysql:
+
+networks:
+  backend:
+    driver: bridge
