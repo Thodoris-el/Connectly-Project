@@ -12,10 +12,11 @@ type EntryType struct {
 }
 
 type MessagingType struct {
-	Sender    SenderType    `json:"sender"`
-	Recipient RecipientType `json:"recipient"`
-	Timestamp int64         `json:"timestamp"`
-	Message   MessageType   `json:"message"`
+	Sender             SenderType    `json:"sender"`
+	Recipient          RecipientType `json:"recipient"`
+	Timestamp          int64         `json:"timestamp"`
+	Message            MessageType   `json:"message,omitempty"`
+	Messaging_Feedback MesFeedType   `json:"messaging_feedback,omitempty"`
 }
 
 type SenderType struct {
@@ -27,9 +28,27 @@ type RecipientType struct {
 }
 
 type MessageType struct {
-	Mid         string           `json:"mid"`
+	Mid         string           `json:"mid,omitempty"`
 	Text        string           `json:"text,omitempty"`
 	Attachments []AttachmentType `json:"attachments,omitempty"`
+}
+
+type MesFeedType struct {
+	FeedbackScreens []FeScType `json:"feedback_screens,omitempty"`
+}
+
+type FeScType struct {
+	ScreenID  int         `json:"screen_id,omitempty"`
+	Questions QuesTypeRes `json:"questions,omitempty"`
+}
+
+type QuesTypeRes struct {
+	Myquestion1 MyQuestionType `json:"myquestion1,omitempty"`
+}
+
+type MyQuestionType struct {
+	Type    string `json:"type,omitempty"`
+	Payload string `json:"payload,omitempty"`
 }
 
 type AttachmentType struct {
@@ -57,9 +76,19 @@ type MessangeSent struct {
 	Message        ResMessageType `json:"message"`
 }
 
+type MessangeSentTemplate struct {
+	Recipient RecipientType          `json:"recipient"`
+	Message   ResMessageTypeTemplate `json:"message"`
+}
+
 type ResMessageType struct {
-	Text          string           `json:"text"`
-	Quick_Replies []QuickReplyType `json:"quick_replies"`
+	Text          string           `json:"text,omitempty"`
+	Quick_Replies []QuickReplyType `json:"quick_replies,omitempty"`
+}
+
+type ResMessageTypeTemplate struct {
+	Text       string                     `json:"text,omitempty"`
+	Attachment AttachmentTypeSendTemplate `json:"attachment,omitempty"`
 }
 
 type QuickReplyType struct {
@@ -67,4 +96,35 @@ type QuickReplyType struct {
 	Title        string `json:"title"`
 	Payload      string `json:"payload"`
 	Image        string `json:"image_url"`
+}
+
+type AttachmentTypeSendTemplate struct {
+	Type    string                  `json:"type,omitempty"`
+	Payload PayloadTypeSendTemplate `json:"payload,omitempty"`
+}
+
+type PayloadTypeSendTemplate struct {
+	Template_Type    string              `json:"template_type"`
+	Title            string              `json:"title"`
+	Subtitle         string              `json:"subtitle"`
+	Button_Title     string              `json:"button_title"`
+	Feedbavk_Screens []FeedbackType      `json:"feedback_screens"`
+	Business_Privacy BusinessPrivacyType `json:"business_privacy"`
+	Expires_In_Days  int                 `json:"expires_in_days"`
+}
+
+type FeedbackType struct {
+	Questions []QuestionType `json:"questions"`
+}
+
+type BusinessPrivacyType struct {
+	Url string `json:"url"`
+}
+
+type QuestionType struct {
+	ID           string `json:"id"`
+	Type         string `json:"type"`
+	Title        string `json:"title"`
+	Score_Label  string `json:"score_label"`
+	Score_Option string `json:"score_option"`
 }

@@ -42,11 +42,14 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 		var sender entity.SenderType
 		var recipient entity.RecipientType
 		var message entity.MessageType
+		var fbFeed entity.MesFeedType
 
 		for _, everyfbMess := range fbMess {
 			sender = everyfbMess.Sender
 			recipient = everyfbMess.Recipient
 			message = everyfbMess.Message
+			fbFeed = everyfbMess.Messaging_Feedback
+
 			conversation := entity.Conversation{}
 			new_conversation, err := conversation.FindByCustomerId(server.DB, sender.ID)
 
@@ -65,9 +68,29 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 					return
 				}
 			}
-			if message.Attachments == nil {
 
-				if strings.Contains(message.Text, "I want to buy") {
+			if message.Attachments == nil && message.Text == "" && len(fbFeed.FeedbackScreens) > 0 {
+				feedscreens := everyfbMess.Messaging_Feedback.FeedbackScreens
+				for _, everyf := range feedscreens {
+
+					if conversation.Stage == "Review" {
+						score := everyf.Questions.Myquestion1.Payload
+						err = server.AddReview(sender.ID, "", score)
+						if err != nil {
+							log.Println("error while creating review", err)
+						}
+						new_conversation.Stage = "None"
+						_, err = new_conversation.UpdateConversation(server.DB, new_conversation.ID)
+						if err != nil {
+							log.Println("error while creating conversation")
+							return
+						}
+						handleMessageWithoutQuickReply(sender.ID, "Thanks for the review!.")
+					}
+				}
+			} else if message.Attachments == nil {
+
+				if strings.Contains(message.Text, "Buy") {
 					new_conversation.Stage = "Buy"
 					_, err = new_conversation.UpdateConversation(server.DB, new_conversation.ID)
 					if err != nil {
@@ -75,7 +98,6 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 						return
 					}
 					handleMessageWithQuickReply(sender.ID, "Are you sure?")
-					log.Println(sender, recipient, message.Text)
 
 				} else if strings.Contains(message.Text, "Yes") {
 					if new_conversation.Stage == "Buy" {
@@ -85,8 +107,8 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 							log.Println("error while creating conversation")
 							return
 						}
-						handleMessageWithoutQuickReply(sender.ID, "Purchased Done, Please write your Review!")
-						log.Println(sender, recipient, message.Text)
+						handleMessageWithoutQuickReply(sender.ID, "Purchased Done!")
+						SendReviewTemplate(sender.ID)
 					} else if new_conversation.Stage == "Review" {
 						new_conversation.Stage = "None"
 						_, err = new_conversation.UpdateConversation(server.DB, new_conversation.ID)
@@ -94,24 +116,15 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 							log.Println("error while creating conversation")
 							return
 						}
-
-						new_review := entity.Review{}
-						new_review.Customer_id = sender.ID
-						new_review.Text = message.Text
-						new_review.Score = -1
-						new_review.CreatedAt = time.Now()
-						new_review.UpdatedAt = time.Now()
-						_, err = new_review.SaveReview(server.DB)
+						err = server.AddReview(sender.ID, message.Text, "-1")
 						if err != nil {
 							log.Println("error while creating database")
 							return
 						}
 						handleMessageWithoutQuickReply(sender.ID, "Thanks for the review!.")
-						log.Println(sender, recipient, message.Text)
 
 					} else {
 						handleMessageWithoutQuickReply(sender.ID, "Didn't understand this! Tell us what product you want to buy.")
-						log.Println(sender, recipient, message.Text)
 					}
 
 				} else {
@@ -122,19 +135,16 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 							log.Println("error while creating conversation")
 							return
 						}
-						new_review := entity.Review{}
-						new_review.Customer_id = sender.ID
-						new_review.Text = message.Text
-						new_review.Score = -1
-						new_review.CreatedAt = time.Now()
-						new_review.UpdatedAt = time.Now()
-						_, err = new_review.SaveReview(server.DB)
+						err = server.AddReview(sender.ID, message.Text, "-1")
+						if err != nil {
+							log.Println("error while creating database")
+							return
+						}
 						if err != nil {
 							log.Println("error while creating database")
 							return
 						}
 						handleMessageWithoutQuickReply(sender.ID, "Thanks for the review!.")
-						log.Println(sender, recipient, message.Text)
 					} else if new_conversation.Stage == "Buy" {
 						if strings.Contains(message.Text, "No") {
 							new_conversation.Stage = "None"
@@ -144,7 +154,6 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 								return
 							}
 							handleMessageWithoutQuickReply(sender.ID, "Purchased Cancelled!")
-							log.Println(sender, recipient, message.Text)
 						} else {
 							new_conversation.Stage = "None"
 							_, err = new_conversation.UpdateConversation(server.DB, new_conversation.ID)
@@ -153,11 +162,9 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 								return
 							}
 							handleMessageWithoutQuickReply(sender.ID, "Didn't understand this! Tell us what product you want to buy.")
-							log.Println(sender, recipient, message.Text)
 						}
 					} else {
 						handleMessageWithoutQuickReply(sender.ID, "Didn't understand this! Tell us what product you want to buy")
-						log.Println(sender, recipient, message.Text)
 					}
 				}
 			} else {

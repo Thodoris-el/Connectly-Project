@@ -116,3 +116,42 @@ func (server *Server) GetPostByCustomerId(resp http.ResponseWriter, request *htt
 		log.Println(err)
 	}
 }
+
+func (server *Server) AddReview(senderID, text, score string) error {
+
+	var err error
+	new_review := entity.Review{}
+
+	//Add values to fields
+	new_review.Customer_id = senderID
+	new_review.Text = text
+	new_review.Score, err = strconv.Atoi(score)
+	if err != nil {
+		log.Println("error converting score to integer")
+		return err
+	}
+	new_review.CreatedAt = time.Now()
+	new_review.UpdatedAt = time.Now()
+
+	if text == "" {
+		switch score {
+		case "1":
+			new_review.Text = "Very Dissatisfied"
+		case "2":
+			new_review.Text = "Dissatisfied"
+		case "3":
+			new_review.Text = "neutral"
+		case "4":
+			new_review.Text = "Satisfied"
+		default:
+			new_review.Text = "Very Satisfied"
+		}
+	}
+
+	_, err = new_review.SaveReview(server.DB)
+	if err != nil {
+		log.Println("error while savung review")
+		return err
+	}
+	return nil
+}
