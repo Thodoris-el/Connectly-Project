@@ -58,5 +58,13 @@ type MessangeSent struct {
 }
 
 type ResMessageType struct {
-	Text string `json:"text"`
+	Text          string           `json:"text"`
+	Quick_Replies []QuickReplyType `json:"quick_replies"`
+}
+
+type QuickReplyType struct {
+	Content_Type string `json:"content_type"`
+	Title        string `json:"title"`
+	Payload      string `json:"payload"`
+	Image        string `json:"image_url"`
 }

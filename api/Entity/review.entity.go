@@ -8,7 +8,7 @@ import (
 )
 
 type Review struct {
-	ID          string `gorm:"primary_key;auto_increment" json:"id"`
+	ID          int64  `gorm:"primary_key;auto_increment" json:"id"`
 	Customer_id string `gorm:"not null;" json:"customer_id"`
 	Text        string `gorm:"size:2550;not null;" json:"text"`
 	Score       int    `gorm:"default: -1" json:"score"`
@@ -21,7 +21,7 @@ func (review *Review) SaveReview(db *gorm.DB) (*Review, error) {
 
 	err := db.Debug().Create(&review).Error
 	if err != nil {
-		log.Println("error while saving review")
+		log.Println("error while saving review", err)
 		return &Review{}, err
 	}
 
