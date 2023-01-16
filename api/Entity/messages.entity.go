@@ -1,5 +1,7 @@
 package entity
 
+//Entities as returned from FB and as needed to be sent to FB
+
 type FacebookMessage struct {
 	Object string      `json:"object"`
 	Entry  []EntryType `json:"entry"`
@@ -47,8 +49,14 @@ type QuesTypeRes struct {
 }
 
 type MyQuestionType struct {
-	Type    string `json:"type,omitempty"`
-	Payload string `json:"payload,omitempty"`
+	Type     string          `json:"type,omitempty"`
+	Payload  string          `json:"payload,omitempty"`
+	FollowUp FollowUpTypeRes `json:"follow_up"`
+}
+
+type FollowUpTypeRes struct {
+	Type    string `json:"type"`
+	Payload string `json:"payload"`
 }
 
 type AttachmentType struct {
@@ -122,9 +130,15 @@ type BusinessPrivacyType struct {
 }
 
 type QuestionType struct {
-	ID           string `json:"id"`
-	Type         string `json:"type"`
-	Title        string `json:"title"`
-	Score_Label  string `json:"score_label"`
-	Score_Option string `json:"score_option"`
+	ID           string       `json:"id"`
+	Type         string       `json:"type"`
+	Title        string       `json:"title"`
+	Score_Label  string       `json:"score_label"`
+	Score_Option string       `json:"score_option"`
+	FollowUp     FollowUpType `json:"follow_up"`
+}
+
+type FollowUpType struct {
+	Type        string `json:"type"`
+	Placeholder string `json:"placeholder"`
 }

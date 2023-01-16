@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func VerifyWebhook(resp http.ResponseWriter, request *http.Request) {
+func (server *Server) VerifyWebhook(resp http.ResponseWriter, request *http.Request) {
 	secretKey := "secret_token123"
 	if request.Method == "GET" {
 		mode := request.URL.Query().Get("hub.mode")

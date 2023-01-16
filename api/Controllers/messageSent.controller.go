@@ -116,12 +116,18 @@ func handleMessageWithoutQuickReply(senderId, message string) error {
 
 func SendReviewTemplate(senderId string) error {
 
+	followUp := entity.FollowUpType{
+		Type:        "free_form",
+		Placeholder: "Give additional feedback",
+	}
+
 	question := entity.QuestionType{
 		ID:           "myquestion1",
 		Type:         "csat",
 		Title:        "How would you rate our product?",
 		Score_Label:  "neg_pos",
 		Score_Option: "five_stars",
+		FollowUp:     followUp,
 	}
 	questions := []entity.QuestionType{}
 	questions = append(questions, question)

@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"time"
@@ -12,7 +12,7 @@ import (
 
 func (server *Server) CreateCustomer(resp http.ResponseWriter, request *http.Request) {
 
-	body, err := ioutil.ReadAll(request.Body)
+	body, err := io.ReadAll(request.Body)
 
 	if err != nil {
 		log.Println(err)
@@ -39,7 +39,8 @@ func (server *Server) CreateCustomer(resp http.ResponseWriter, request *http.Req
 		resp.Write([]byte("Error while creating customer"))
 		return
 	}
-	resp.WriteHeader(200)
+	resp.Header().Set("Content-Type", "application/json")
+	resp.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(resp).Encode(customerCreated)
 	if err != nil {
 		log.Println(err)
@@ -58,7 +59,8 @@ func (server *Server) GetCustomers(resp http.ResponseWriter, request *http.Reque
 		resp.Write([]byte("error while finding customers"))
 	}
 
-	resp.WriteHeader(200)
+	resp.Header().Set("Content-Type", "application/json")
+	resp.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(resp).Encode(customers)
 	if err != nil {
 		log.Println(err)

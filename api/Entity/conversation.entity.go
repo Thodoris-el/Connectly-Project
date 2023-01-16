@@ -8,6 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
+//Structure of the Conversation Entity
 type Conversation struct {
 	ID          int64  `gorm:"primary_key;auto_increment" json:"id"`
 	Facebook_id string `gorm:"not null;" json:"facebook_id"`
@@ -16,6 +17,7 @@ type Conversation struct {
 	UpdatedAt   time.Time
 }
 
+//Save Conversation to DB
 func (conversation *Conversation) SaveConversation(db *gorm.DB) (*Conversation, error) {
 
 	err := db.Debug().Create(&conversation).Error
@@ -26,7 +28,7 @@ func (conversation *Conversation) SaveConversation(db *gorm.DB) (*Conversation, 
 	return conversation, err
 }
 
-//find all conversations
+//find all conversations fromDB
 func (conversation *Conversation) FindAllConversations(db *gorm.DB) (*[]Conversation, error) {
 
 	conversations := []Conversation{}

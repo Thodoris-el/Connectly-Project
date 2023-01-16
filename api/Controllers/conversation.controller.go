@@ -12,6 +12,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+//Create Conversation from endpoint if needed
 func (server *Server) CreateConversation(resp http.ResponseWriter, request *http.Request) {
 
 	body, err := ioutil.ReadAll(request.Body)
@@ -42,13 +43,15 @@ func (server *Server) CreateConversation(resp http.ResponseWriter, request *http
 		return
 	}
 
-	resp.WriteHeader(200)
+	resp.Header().Set("Content-Type", "application/json")
+	resp.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(resp).Encode(conversationCreated)
 	if err != nil {
 		log.Println(err)
 	}
 }
 
+//Get Conversations from DB
 func (server *Server) GetConversation(resp http.ResponseWriter, request *http.Request) {
 
 	review := entity.Conversation{}
@@ -60,13 +63,15 @@ func (server *Server) GetConversation(resp http.ResponseWriter, request *http.Re
 		resp.Write([]byte("error while finding conversations"))
 	}
 
-	resp.WriteHeader(200)
+	resp.Header().Set("Content-Type", "application/json")
+	resp.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(resp).Encode(conversations)
 	if err != nil {
 		log.Println(err)
 	}
 }
 
+//Get Conversation By ID from DB
 func (server *Server) GetConversationById(resp http.ResponseWriter, request *http.Request) {
 
 	vars := mux.Vars(request)
@@ -88,13 +93,15 @@ func (server *Server) GetConversationById(resp http.ResponseWriter, request *htt
 		return
 	}
 
-	resp.WriteHeader(200)
+	resp.Header().Set("Content-Type", "application/json")
+	resp.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(resp).Encode(conversationGet)
 	if err != nil {
 		log.Println(err)
 	}
 }
 
+//Get Conversation by customerID from DB
 func (server *Server) GetConversationByCustomerId(resp http.ResponseWriter, request *http.Request) {
 
 	vars := mux.Vars(request)
@@ -110,7 +117,8 @@ func (server *Server) GetConversationByCustomerId(resp http.ResponseWriter, requ
 		return
 	}
 
-	resp.WriteHeader(200)
+	resp.Header().Set("Content-Type", "application/json")
+	resp.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(resp).Encode(conversationGet)
 	if err != nil {
 		log.Println(err)

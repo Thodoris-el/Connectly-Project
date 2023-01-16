@@ -75,7 +75,8 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 
 					if conversation.Stage == "Review" {
 						score := everyf.Questions.Myquestion1.Payload
-						err = server.AddReview(sender.ID, "", score)
+						text := everyf.Questions.Myquestion1.FollowUp.Payload
+						err = server.AddReview(sender.ID, text, score)
 						if err != nil {
 							log.Println("error while creating review", err)
 						}

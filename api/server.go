@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"log"
@@ -10,10 +10,16 @@ import (
 
 var server = controllers.Server{}
 
-// Initialize request
+func init() {
+	//load values from .env file
+	if err := godotenv.Load(); err != nil {
+		log.Println("error while loading env ", err)
+	}
+}
 
-func main() {
-	//Load env
+//Run api server
+func Run() {
+	//load .env
 	err := godotenv.Load()
 	if err != nil {
 		log.Println("error while loading .env file")
@@ -21,6 +27,7 @@ func main() {
 		log.Println("We are getting the .env values")
 	}
 
+	//Get db credentials from .env
 	Db_user := os.Getenv("DB_USERNAME")
 	Db_password := os.Getenv("DB_PASSWORD")
 	Db_host := os.Getenv("DB_HOST")

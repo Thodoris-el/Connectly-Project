@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"strconv"
@@ -14,7 +14,7 @@ import (
 
 func (server *Server) CreateReview(resp http.ResponseWriter, request *http.Request) {
 
-	body, err := ioutil.ReadAll(request.Body)
+	body, err := io.ReadAll(request.Body)
 
 	if err != nil {
 		log.Println(err)
@@ -42,7 +42,8 @@ func (server *Server) CreateReview(resp http.ResponseWriter, request *http.Reque
 		return
 	}
 
-	resp.WriteHeader(200)
+	resp.Header().Set("Content-Type", "application/json")
+	resp.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(resp).Encode(reviewCreated)
 	if err != nil {
 		log.Println(err)
@@ -60,14 +61,15 @@ func (server *Server) GetReviews(resp http.ResponseWriter, request *http.Request
 		resp.Write([]byte("error while finding reviews"))
 	}
 
-	resp.WriteHeader(200)
+	resp.Header().Set("Content-Type", "application/json")
+	resp.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(resp).Encode(reviews)
 	if err != nil {
 		log.Println(err)
 	}
 }
 
-func (server *Server) GetPostById(resp http.ResponseWriter, request *http.Request) {
+func (server *Server) GetReviewById(resp http.ResponseWriter, request *http.Request) {
 
 	vars := mux.Vars(request)
 	R_id, err := strconv.ParseUint(vars["id"], 10, 64)
@@ -88,14 +90,15 @@ func (server *Server) GetPostById(resp http.ResponseWriter, request *http.Reques
 		return
 	}
 
-	resp.WriteHeader(200)
+	resp.Header().Set("Content-Type", "application/json")
+	resp.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(resp).Encode(reviewGet)
 	if err != nil {
 		log.Println(err)
 	}
 }
 
-func (server *Server) GetPostByCustomerId(resp http.ResponseWriter, request *http.Request) {
+func (server *Server) GetReviewByCustomerId(resp http.ResponseWriter, request *http.Request) {
 
 	vars := mux.Vars(request)
 	C_id := vars["customer_id"]
@@ -110,7 +113,8 @@ func (server *Server) GetPostByCustomerId(resp http.ResponseWriter, request *htt
 		return
 	}
 
-	resp.WriteHeader(200)
+	resp.Header().Set("Content-Type", "application/json")
+	resp.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(resp).Encode(reviewGet)
 	if err != nil {
 		log.Println(err)

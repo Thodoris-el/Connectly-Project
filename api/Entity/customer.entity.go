@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
+//Structure of the Customer Entity
 type Customer struct {
 	ID           int64  `gorm:"primary_key;auto_increment" json:"id"`
 	First_name   string `gorm:"size:255;not null;" json:"first_name"`
@@ -17,7 +18,7 @@ type Customer struct {
 	UpdatedAt    time.Time
 }
 
-//Save Customer Function
+//Save Customer Function to DB
 func (customer *Customer) SaveCustomer(db *gorm.DB) (*Customer, error) {
 
 	err := db.Debug().Create(&customer).Error
@@ -29,7 +30,7 @@ func (customer *Customer) SaveCustomer(db *gorm.DB) (*Customer, error) {
 	return customer, nil
 }
 
-//find all customers
+//find all customers from DB
 func (customer *Customer) FindAllCustomers(db *gorm.DB) (*[]Customer, error) {
 
 	customers := []Customer{}
