@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"strconv"
@@ -15,7 +15,7 @@ import (
 //Create Conversation from endpoint if needed
 func (server *Server) CreateConversation(resp http.ResponseWriter, request *http.Request) {
 
-	body, err := ioutil.ReadAll(request.Body)
+	body, err := io.ReadAll(request.Body)
 
 	if err != nil {
 		log.Println(err)
