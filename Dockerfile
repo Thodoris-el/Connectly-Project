@@ -1,3 +1,4 @@
+
 FROM golang:alpine
 
 RUN mkdir /app

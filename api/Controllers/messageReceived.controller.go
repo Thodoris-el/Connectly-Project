@@ -32,7 +32,7 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 	}
 
 	if facebookPost.Object != "page" {
-		log.Panicln("No fb object page")
+		log.Println("No fb object page")
 		resp.WriteHeader(400)
 		resp.Write([]byte("No fb object page"))
 	}
@@ -82,7 +82,7 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 					}
 					err = handleMessageWithoutQuickReply(sender.ID, "Purchased Done!")
 					if err != nil {
-						log.Fatalln(err.Error())
+						log.Println(err.Error())
 						return
 					}
 					customer := entity.Customer{}
@@ -90,7 +90,7 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 					if err != nil {
 						err = handleMessageWithoutQuickReply(sender.ID, "Please write your review as a message!")
 						if err != nil {
-							log.Fatalln(err.Error())
+							log.Println(err.Error())
 							return
 						}
 						resp.Header().Add("action", "review")
