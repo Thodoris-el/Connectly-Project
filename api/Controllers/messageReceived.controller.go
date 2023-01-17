@@ -13,6 +13,136 @@ import (
 	"gorm.io/gorm"
 )
 
+func (server *Server) HandleMessengeQuickReply(message entity.MessageType, new_conversation entity.Conversation, sender string) (string, error) {
+	//if customer replied that he bought the product
+	if message.QuickReply.Payload == "Buy Product" {
+		//change conversation stage to review
+		new_conversation.Stage = "Review"
+		_, err := new_conversation.UpdateConversation(server.DB, new_conversation.ID)
+		if err != nil {
+			log.Println("error while creating conversation")
+			return "", err
+		}
+
+		//reply to customer with thank you
+		err = handleMessageWithoutQuickReply(sender, "Purchased Done!")
+		if err != nil {
+			log.Println(err.Error())
+			return "", err
+		}
+		//find customer to see his language
+		customer := entity.Customer{}
+		customerGet, err := customer.FindByFacebookId(server.DB, sender)
+		//if error just reply with message
+		if err != nil {
+			err = handleMessageWithoutQuickReply(sender, "Please write your review as a message!")
+			if err != nil {
+				log.Println(err.Error())
+				return "", err
+			}
+			return "review", err
+		}
+		//find the template of the review
+		template := entity.Template{}
+		templateGet, err := template.FindByLanguage(server.DB, customerGet.Language)
+		//if error just reply with message
+		if err != nil {
+			err = handleMessageWithoutQuickReply(sender, "Please write your review as a message!")
+			if err != nil {
+				log.Println(err.Error())
+				return "", err
+			}
+			return "review", err
+		}
+		//send the review
+		err = SendReviewTemplate(sender, templateGet)
+		if err != nil {
+			log.Println(err.Error())
+			return "", err
+		}
+		return "review", err
+		//if customer replied that he didnt bougth the product
+	} else if message.QuickReply.Payload == "Don't Buy Product" {
+		//update conversation stage to none
+		new_conversation.Stage = "None"
+		_, err := new_conversation.UpdateConversation(server.DB, new_conversation.ID)
+		if err != nil {
+			log.Println("error while creating conversation")
+			return "", err
+		}
+		//reply to customer that his purchase is cancelled
+		err = handleMessageWithoutQuickReply(sender, "Purchase Cancelled!")
+		if err != nil {
+			log.Println(err.Error())
+			return "", err
+		}
+		return "none", err
+	}
+	return "", errors.New("invalid quick reply anser")
+}
+
+func (server *Server) HandleMessageTemplate(everyfbMess entity.MessagingType, conversation, new_conversation entity.Conversation, sender string) (string, error) {
+	feedscreens := everyfbMess.Messaging_Feedback.FeedbackScreens
+	for _, everyf := range feedscreens {
+
+		if conversation.Stage == "Review" {
+			score := everyf.Questions.Myquestion1.Payload
+			text := everyf.Questions.Myquestion1.FollowUp.Payload
+			err := server.AddReview(sender, text, score)
+			if err != nil {
+				log.Println("error while creating review", err)
+				return "", err
+			}
+			new_conversation.Stage = "None"
+			_, err = new_conversation.UpdateConversation(server.DB, new_conversation.ID)
+			if err != nil {
+				log.Println("error while creating conversation")
+				return "", err
+			}
+			err = handleMessageWithoutQuickReply(sender, "Thanks for the review!.")
+			if err != nil {
+				log.Println(err.Error())
+				return "", err
+			}
+			return "none", err
+		}
+	}
+	return "", errors.New("invalid stage for review")
+}
+
+func (server *Server) SendTemplate(sender string) (string, error) {
+	//Find customer that send the message
+	customer := entity.Customer{}
+	customerGet, err := customer.FindByFacebookId(server.DB, sender)
+	//if error send the review as message
+	if err != nil {
+		err = handleMessageWithoutQuickReply(sender, "Please write your review as a message!")
+		if err != nil {
+			log.Println(err.Error())
+			return "", err
+		}
+		return "review", err
+	}
+	//find the template
+	template := entity.Template{}
+	templateGet, err := template.FindByLanguage(server.DB, customerGet.Language)
+	//if error send it as a message
+	if err != nil {
+		err = handleMessageWithoutQuickReply(sender, "Please write your review as a message!")
+		if err != nil {
+			log.Println(err.Error())
+			return "", err
+		}
+		return "review", err
+	}
+	err = SendReviewTemplate(sender, templateGet)
+	if err != nil {
+		log.Println(err.Error())
+		return "", err
+	}
+	return "review", err
+}
+
 func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Request) {
 	//Read the body of the request received
 	log.Println("Header: ", request.Header)
@@ -73,89 +203,21 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 			}
 			//if user message via quick anser
 			if message.QuickReply.Payload != "" {
-				if message.QuickReply.Payload == "Buy Product" {
-					new_conversation.Stage = "Review"
-					_, err = new_conversation.UpdateConversation(server.DB, new_conversation.ID)
-					if err != nil {
-						log.Println("error while creating conversation")
-						return
-					}
-					err = handleMessageWithoutQuickReply(sender.ID, "Purchased Done!")
-					if err != nil {
-						log.Println(err.Error())
-						return
-					}
-					customer := entity.Customer{}
-					customerGet, err := customer.FindByFacebookId(server.DB, sender.ID)
-					if err != nil {
-						err = handleMessageWithoutQuickReply(sender.ID, "Please write your review as a message!")
-						if err != nil {
-							log.Println(err.Error())
-							return
-						}
-						resp.Header().Add("action", "review")
-						return
-					}
-					template := entity.Template{}
-					templateGet, err := template.FindByLanguage(server.DB, customerGet.Language)
-					if err != nil {
-						err = handleMessageWithoutQuickReply(sender.ID, "Please write your review as a message!")
-						if err != nil {
-							log.Fatalln(err.Error())
-							return
-						}
-						resp.Header().Add("action", "review")
-						return
-					}
-					err = SendReviewTemplate(sender.ID, templateGet)
-					if err != nil {
-						log.Fatalln(err.Error())
-						return
-					}
-					resp.Header().Add("action", "review")
-					return
-				} else if message.QuickReply.Payload == "Don't Buy Product" {
-					new_conversation.Stage = "None"
-					_, err = new_conversation.UpdateConversation(server.DB, new_conversation.ID)
-					if err != nil {
-						log.Println("error while creating conversation")
-						return
-					}
-					err = handleMessageWithoutQuickReply(sender.ID, "Purchased Cancelled!")
-					if err != nil {
-						log.Fatalln(err.Error())
-						return
-					}
-					resp.Header().Add("action", "none")
+				str, err := server.HandleMessengeQuickReply(message, *new_conversation, sender.ID)
+				if err != nil {
+					log.Println(err)
 					return
 				}
+				resp.Header().Add("action", str)
+				return
 				//if user answers via review template
 			} else if message.Attachments == nil && message.Text == "" && len(fbFeed.FeedbackScreens) > 0 {
-				feedscreens := everyfbMess.Messaging_Feedback.FeedbackScreens
-				for _, everyf := range feedscreens {
-
-					if conversation.Stage == "Review" {
-						score := everyf.Questions.Myquestion1.Payload
-						text := everyf.Questions.Myquestion1.FollowUp.Payload
-						err = server.AddReview(sender.ID, text, score)
-						if err != nil {
-							log.Println("error while creating review", err)
-						}
-						new_conversation.Stage = "None"
-						_, err = new_conversation.UpdateConversation(server.DB, new_conversation.ID)
-						if err != nil {
-							log.Println("error while creating conversation")
-							return
-						}
-						err = handleMessageWithoutQuickReply(sender.ID, "Thanks for the review!.")
-						if err != nil {
-							log.Fatalln(err.Error())
-							return
-						}
-						resp.Header().Add("action", "none")
-						return
-					}
+				str, err := server.HandleMessageTemplate(everyfbMess, conversation, *new_conversation, sender.ID)
+				if err != nil {
+					log.Println(err)
 				}
+				resp.Header().Add("action", str)
+				return
 				//if user answers via text
 			} else if message.Attachments == nil {
 
@@ -169,7 +231,7 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 					}
 					err = handleMessageWithQuickReply(sender.ID, "Are you sure?")
 					if err != nil {
-						log.Fatalln(err.Error())
+						log.Println(err.Error())
 						return
 					}
 					resp.Header().Add("action", "buy")
@@ -186,37 +248,15 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 						}
 						err = handleMessageWithoutQuickReply(sender.ID, "Purchased Done!")
 						if err != nil {
-							log.Fatalln(err.Error())
+							log.Println(err.Error())
 							return
 						}
-						customer := entity.Customer{}
-						customerGet, err := customer.FindByFacebookId(server.DB, sender.ID)
+						str, err := server.SendTemplate(sender.ID)
 						if err != nil {
-							err = handleMessageWithoutQuickReply(sender.ID, "Please write your review as a message!")
-							if err != nil {
-								log.Fatalln(err.Error())
-								return
-							}
-							resp.Header().Add("action", "review")
+							log.Println(err)
 							return
 						}
-						template := entity.Template{}
-						templateGet, err := template.FindByLanguage(server.DB, customerGet.Language)
-						if err != nil {
-							err = handleMessageWithoutQuickReply(sender.ID, "Please write your review as a message!")
-							if err != nil {
-								log.Fatalln(err.Error())
-								return
-							}
-							resp.Header().Add("action", "review")
-							return
-						}
-						err = SendReviewTemplate(sender.ID, templateGet)
-						if err != nil {
-							log.Fatalln(err.Error())
-							return
-						}
-						resp.Header().Add("action", "review")
+						resp.Header().Add("action", str)
 
 					} else if new_conversation.Stage == "Review" {
 						new_conversation.Stage = "None"
@@ -232,7 +272,7 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 						}
 						err = handleMessageWithoutQuickReply(sender.ID, "Thanks for the review!.")
 						if err != nil {
-							log.Fatalln(err.Error())
+							log.Println(err.Error())
 							return
 						}
 						resp.Header().Add("action", "none")
@@ -240,7 +280,7 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 					} else {
 						err = handleMessageWithoutQuickReply(sender.ID, "Didn't understand this! Tell us what product you want to buy.")
 						if err != nil {
-							log.Fatalln(err.Error())
+							log.Println(err.Error())
 							return
 						}
 						resp.Header().Add("action", "none")
@@ -267,7 +307,7 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 						}
 						err = handleMessageWithoutQuickReply(sender.ID, "Thanks for the review!.")
 						if err != nil {
-							log.Fatalln(err.Error())
+							log.Println(err.Error())
 							return
 						}
 						resp.Header().Add("action", "none")
@@ -284,7 +324,7 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 							}
 							err = handleMessageWithoutQuickReply(sender.ID, "Purchased Cancelled!")
 							if err != nil {
-								log.Fatalln(err.Error())
+								log.Println(err.Error())
 								return
 							}
 							resp.Header().Add("action", "none")
@@ -299,7 +339,7 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 							}
 							err = handleMessageWithoutQuickReply(sender.ID, "Didn't understand this! Tell us what product you want to buy.")
 							if err != nil {
-								log.Fatalln(err.Error())
+								log.Println(err.Error())
 								return
 							}
 							resp.Header().Add("action", "none")
@@ -309,7 +349,7 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 					} else {
 						err = handleMessageWithoutQuickReply(sender.ID, "Didn't understand this! Tell us what product you want to buy")
 						if err != nil {
-							log.Fatalln(err.Error())
+							log.Println(err.Error())
 							return
 						}
 						resp.Header().Add("action", "none")
