@@ -19,9 +19,9 @@ type Server struct {
 func (server *Server) Initialize(Db_user, Db_password, Db_host, Db_name, Db_port string) {
 	var err error
 
-	dsn := Db_user + ":" + Db_password + "@tcp" + "(" + Db_host + ":" + Db_port + ")/" + Db_name + "?" + "parseTime=true&loc=Local"
-
-	server.DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	//dsn := Db_user + ":" + Db_password + "@tcp" + "(" + Db_host + ":" + Db_port + ")/" + Db_name + "?" + "parseTime=true&loc=Local"
+	DSN := "jegaa58mmfhaikonpe0y:pscale_pw_ObRIK1EcJpcgtA3P47p6qShtWH5Xr1fFM108z46JuJY@tcp(aws-eu-west-2.connect.psdb.cloud)/connectly_project?tls=true"
+	server.DB, err = gorm.Open(mysql.Open(DSN), &gorm.Config{})
 
 	if err != nil {
 		log.Println("Cant connect to mysql database")
