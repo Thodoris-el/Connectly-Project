@@ -20,7 +20,7 @@ services:
       - 3306:3306
     environment:
       - MYSQL_ROOT_HOST=${DB_HOST}
-      - MYSQL_USER=${DB_USER}
+      - MYSQL_USER=${DB_USERNAME}
       - MYSQL_PASSWORD=${DB_PASSWORD}
       - MY_SQL_DATABASE=${DB_NAME}
       - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
@@ -36,7 +36,7 @@ services:
       - connectly_mysql
     environment:
       - PMA_HOST=connectly_mysql
-      - PMA_USER=${DB_USER}
+      - PMA_USER=${DB_USERNAME}
       - PMA_PORT=${DB_PORT}
       - PMA_PASSWORD=${DB_PASSWORD}
     ports:

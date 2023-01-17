@@ -33,6 +33,7 @@ type MessageType struct {
 	Mid         string           `json:"mid,omitempty"`
 	Text        string           `json:"text,omitempty"`
 	Attachments []AttachmentType `json:"attachments,omitempty"`
+	QuickReply  QuickReplyType   `json:"quick_reply,omitempty"`
 }
 
 type MesFeedType struct {
@@ -100,10 +101,10 @@ type ResMessageTypeTemplate struct {
 }
 
 type QuickReplyType struct {
-	Content_Type string `json:"content_type"`
-	Title        string `json:"title"`
-	Payload      string `json:"payload"`
-	Image        string `json:"image_url"`
+	Content_Type string `json:"content_type,omitempty"`
+	Title        string `json:"title,omitempty"`
+	Payload      string `json:"payload,omitempty"`
+	Image        string `json:"image_url,omitempty"`
 }
 
 type AttachmentTypeSendTemplate struct {

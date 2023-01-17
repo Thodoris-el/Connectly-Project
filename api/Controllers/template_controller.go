@@ -13,7 +13,7 @@ import (
 )
 
 //Create Conversation from endpoint if needed
-func (server *Server) CreateConversation(resp http.ResponseWriter, request *http.Request) {
+func (server *Server) CreateTemplate(resp http.ResponseWriter, request *http.Request) {
 
 	body, err := io.ReadAll(request.Body)
 
@@ -22,16 +22,16 @@ func (server *Server) CreateConversation(resp http.ResponseWriter, request *http
 		return
 	}
 
-	conversation := entity.Conversation{}
-	err = json.Unmarshal(body, &conversation)
+	template := entity.Template{}
+	err = json.Unmarshal(body, &template)
 	if err != nil {
 		http.Error(resp, err.Error(), http.StatusBadRequest)
 		return
 	}
-	conversation.CreatedAt = time.Now()
-	conversation.UpdatedAt = time.Now()
+	template.CreatedAt = time.Now()
+	template.UpdatedAt = time.Now()
 
-	conversationCreated, err := conversation.SaveConversation(server.DB)
+	templateCreated, err := template.SaveTemplate(server.DB)
 
 	if err != nil {
 		http.Error(resp, err.Error(), http.StatusBadRequest)
@@ -40,18 +40,18 @@ func (server *Server) CreateConversation(resp http.ResponseWriter, request *http
 
 	resp.Header().Set("Content-Type", "application/json")
 	resp.WriteHeader(http.StatusOK)
-	err = json.NewEncoder(resp).Encode(conversationCreated)
+	err = json.NewEncoder(resp).Encode(templateCreated)
 	if err != nil {
 		log.Println(err)
 	}
 }
 
 //Get Conversations from DB
-func (server *Server) GetConversation(resp http.ResponseWriter, request *http.Request) {
+func (server *Server) GetTemplate(resp http.ResponseWriter, request *http.Request) {
 
-	conversation := entity.Conversation{}
+	template := entity.Template{}
 
-	conversations, err := conversation.FindAllConversations(server.DB)
+	templates, err := template.FindAllTemplates(server.DB)
 	if err != nil {
 		http.Error(resp, err.Error(), http.StatusBadRequest)
 		return
@@ -59,25 +59,25 @@ func (server *Server) GetConversation(resp http.ResponseWriter, request *http.Re
 
 	resp.Header().Set("Content-Type", "application/json")
 	resp.WriteHeader(http.StatusOK)
-	err = json.NewEncoder(resp).Encode(conversations)
+	err = json.NewEncoder(resp).Encode(templates)
 	if err != nil {
 		log.Println(err)
 	}
 }
 
 //Get Conversation By ID from DB
-func (server *Server) GetConversationById(resp http.ResponseWriter, request *http.Request) {
+func (server *Server) GetTemplateById(resp http.ResponseWriter, request *http.Request) {
 
 	vars := mux.Vars(request)
-	R_id, err := strconv.ParseUint(vars["id"], 10, 64)
+	T_id, err := strconv.ParseUint(vars["id"], 10, 64)
 	if err != nil {
 		http.Error(resp, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	conversation := entity.Conversation{}
+	template := entity.Template{}
 
-	conversationGet, err := conversation.FindById(server.DB, int64(R_id))
+	templateGet, err := template.FindById(server.DB, int64(T_id))
 	if err != nil {
 		http.Error(resp, err.Error(), http.StatusBadRequest)
 		return
@@ -85,21 +85,21 @@ func (server *Server) GetConversationById(resp http.ResponseWriter, request *htt
 
 	resp.Header().Set("Content-Type", "application/json")
 	resp.WriteHeader(http.StatusOK)
-	err = json.NewEncoder(resp).Encode(conversationGet)
+	err = json.NewEncoder(resp).Encode(templateGet)
 	if err != nil {
 		log.Println(err)
 	}
 }
 
 //Get Conversation by customerID from DB
-func (server *Server) GetConversationByCustomerId(resp http.ResponseWriter, request *http.Request) {
+func (server *Server) GetTemplateByLanguage(resp http.ResponseWriter, request *http.Request) {
 
 	vars := mux.Vars(request)
-	C_id := vars["customer_id"]
+	lang := vars["language"]
 
-	conversation := entity.Conversation{}
+	template := entity.Template{}
 
-	conversationGet, err := conversation.FindByCustomerId(server.DB, C_id)
+	templateGet, err := template.FindByLanguage(server.DB, lang)
 	if err != nil {
 		http.Error(resp, err.Error(), http.StatusBadRequest)
 		return
@@ -107,13 +107,13 @@ func (server *Server) GetConversationByCustomerId(resp http.ResponseWriter, requ
 
 	resp.Header().Set("Content-Type", "application/json")
 	resp.WriteHeader(http.StatusOK)
-	err = json.NewEncoder(resp).Encode(conversationGet)
+	err = json.NewEncoder(resp).Encode(templateGet)
 	if err != nil {
 		log.Println(err)
 	}
 }
 
-func (server *Server) UpdateConversation(resp http.ResponseWriter, request *http.Request) {
+func (server *Server) UpdateTemplate(resp http.ResponseWriter, request *http.Request) {
 
 	vars := mux.Vars(request)
 	C_id, err := strconv.ParseInt(vars["id"], 10, 64)
@@ -128,13 +128,13 @@ func (server *Server) UpdateConversation(resp http.ResponseWriter, request *http
 		return
 	}
 
-	conversation := entity.Conversation{}
-	err = json.Unmarshal(body, &conversation)
+	template := entity.Template{}
+	err = json.Unmarshal(body, &template)
 	if err != nil {
 		http.Error(resp, err.Error(), http.StatusBadRequest)
 		return
 	}
-	updatedConversation, err := conversation.UpdateConversation(server.DB, C_id)
+	updatedTemplate, err := template.UpdateTemplate(server.DB, C_id)
 	if err != nil {
 		http.Error(resp, err.Error(), http.StatusBadRequest)
 		return
@@ -142,13 +142,13 @@ func (server *Server) UpdateConversation(resp http.ResponseWriter, request *http
 
 	resp.Header().Set("Content-Type", "application/json")
 	resp.WriteHeader(http.StatusOK)
-	err = json.NewEncoder(resp).Encode(updatedConversation)
+	err = json.NewEncoder(resp).Encode(updatedTemplate)
 	if err != nil {
 		log.Println(err)
 	}
 }
 
-func (server *Server) DeleteConversation(resp http.ResponseWriter, request *http.Request) {
+func (server *Server) DeleteTemplate(resp http.ResponseWriter, request *http.Request) {
 
 	vars := mux.Vars(request)
 	C_id, err := strconv.ParseInt(vars["id"], 10, 64)
@@ -157,8 +157,8 @@ func (server *Server) DeleteConversation(resp http.ResponseWriter, request *http
 		return
 	}
 
-	conversation := entity.Conversation{}
-	_, err = conversation.DeleteConversation(server.DB, C_id)
+	template := entity.Template{}
+	_, err = template.DeleteTemplate(server.DB, C_id)
 	if err != nil {
 		http.Error(resp, err.Error(), http.StatusBadRequest)
 		return

@@ -68,3 +68,31 @@ func (review *Review) FindByCustomerId(db *gorm.DB, C_id string) (*[]Review, err
 
 	return &reviews, err
 }
+
+//update review
+func (review *Review) UpdateReview(db *gorm.DB, C_id int64) (*Review, error) {
+
+	db = db.Debug().Model(&Review{}).Where("id = ?", C_id).Take(&Review{}).UpdateColumns(
+		map[string]interface{}{
+			"customer_id": review.Customer_id,
+			"text":        review.Text,
+			"score":       review.Score,
+			"updated_at":  time.Now(),
+		},
+	)
+	err := db.Debug().Model(&Review{}).Where("id = ?", C_id).Take(&review).Error
+	if err != nil {
+		return &Review{}, err
+	}
+	return review, nil
+}
+
+//delete review
+func (review *Review) DeleteReview(db *gorm.DB, C_id int64) (int64, error) {
+	db = db.Debug().Model(&Review{}).Where("id = ?", C_id).Take(&Review{}).Delete(&Review{})
+
+	if db.Error != nil {
+		return 0, db.Error
+	}
+	return db.RowsAffected, nil
+}

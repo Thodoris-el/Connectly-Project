@@ -87,3 +87,13 @@ func (conversation *Conversation) UpdateConversation(db *gorm.DB, C_id int64) (*
 	}
 	return conversation, nil
 }
+
+//delete conversation
+func (conversation *Conversation) DeleteConversation(db *gorm.DB, C_id int64) (int64, error) {
+	db = db.Debug().Model(&Conversation{}).Where("id = ?", C_id).Take(&Conversation{}).Delete(&Conversation{})
+
+	if db.Error != nil {
+		return 0, db.Error
+	}
+	return db.RowsAffected, nil
+}

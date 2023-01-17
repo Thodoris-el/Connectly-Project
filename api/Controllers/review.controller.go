@@ -17,18 +17,15 @@ func (server *Server) CreateReview(resp http.ResponseWriter, request *http.Reque
 	body, err := io.ReadAll(request.Body)
 
 	if err != nil {
-		log.Println(err)
-		resp.WriteHeader(400)
-		resp.Write([]byte("Error while creating review"))
+		http.Error(resp, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	review := entity.Review{}
 	err = json.Unmarshal(body, &review)
 	if err != nil {
-		log.Println(err)
-		resp.WriteHeader(400)
-		resp.Write([]byte("Error while unmarshall"))
+		http.Error(resp, err.Error(), http.StatusBadRequest)
+		return
 	}
 	review.CreatedAt = time.Now()
 	review.UpdatedAt = time.Now()
@@ -36,9 +33,7 @@ func (server *Server) CreateReview(resp http.ResponseWriter, request *http.Reque
 	reviewCreated, err := review.SaveReview(server.DB)
 
 	if err != nil {
-		log.Println(err)
-		resp.WriteHeader(400)
-		resp.Write([]byte("Error while creating review"))
+		http.Error(resp, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -56,9 +51,8 @@ func (server *Server) GetReviews(resp http.ResponseWriter, request *http.Request
 
 	reviews, err := review.FindAllReviews(server.DB)
 	if err != nil {
-		log.Println(err)
-		resp.WriteHeader(400)
-		resp.Write([]byte("error while finding reviews"))
+		http.Error(resp, err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	resp.Header().Set("Content-Type", "application/json")
@@ -74,9 +68,7 @@ func (server *Server) GetReviewById(resp http.ResponseWriter, request *http.Requ
 	vars := mux.Vars(request)
 	R_id, err := strconv.ParseUint(vars["id"], 10, 64)
 	if err != nil {
-		log.Println("bad request")
-		resp.WriteHeader(http.StatusBadRequest)
-		resp.Write([]byte("bad request"))
+		http.Error(resp, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -84,9 +76,7 @@ func (server *Server) GetReviewById(resp http.ResponseWriter, request *http.Requ
 
 	reviewGet, err := review.FindById(server.DB, int64(R_id))
 	if err != nil {
-		log.Println(err)
-		resp.WriteHeader(400)
-		resp.Write([]byte("internal server error"))
+		http.Error(resp, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -107,9 +97,7 @@ func (server *Server) GetReviewByCustomerId(resp http.ResponseWriter, request *h
 
 	reviewGet, err := review.FindByCustomerId(server.DB, C_id)
 	if err != nil {
-		log.Println(err)
-		resp.WriteHeader(400)
-		resp.Write([]byte("internal server error"))
+		http.Error(resp, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -158,4 +146,63 @@ func (server *Server) AddReview(senderID, text, score string) error {
 		return err
 	}
 	return nil
+}
+
+func (server *Server) UpdateReview(resp http.ResponseWriter, request *http.Request) {
+
+	vars := mux.Vars(request)
+	C_id, err := strconv.ParseInt(vars["id"], 10, 64)
+	if err != nil {
+		http.Error(resp, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	body, err := io.ReadAll(request.Body)
+	if err != nil {
+		http.Error(resp, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	review := entity.Review{}
+	err = json.Unmarshal(body, &review)
+	if err != nil {
+		http.Error(resp, err.Error(), http.StatusBadRequest)
+		return
+	}
+	updatedReview, err := review.UpdateReview(server.DB, C_id)
+	if err != nil {
+		http.Error(resp, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	resp.Header().Set("Content-Type", "application/json")
+	resp.WriteHeader(http.StatusOK)
+	err = json.NewEncoder(resp).Encode(updatedReview)
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+func (server *Server) DeleteReview(resp http.ResponseWriter, request *http.Request) {
+
+	vars := mux.Vars(request)
+	C_id, err := strconv.ParseInt(vars["id"], 10, 64)
+	if err != nil {
+		http.Error(resp, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	review := entity.Review{}
+	_, err = review.DeleteReview(server.DB, C_id)
+	if err != nil {
+		http.Error(resp, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	resp.Header().Set("Content-Type", "application/json")
+	resp.WriteHeader(http.StatusOK)
+	err = json.NewEncoder(resp).Encode("")
+	if err != nil {
+		log.Println(err)
+	}
 }

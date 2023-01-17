@@ -20,21 +20,24 @@ func handleMessageWithQuickReply(senderId, message string) error {
 		return err
 	}
 
-	//Create Quick reply for product buy verification
+	//Create Quick reply for product buy product verification
 	var quickReply []entity.QuickReplyType
 
 	var quickReplytmp entity.QuickReplyType
+
+	//Quick Reply for Yes
 	quickReplytmp.Content_Type = "text"
 	quickReplytmp.Title = "Yes"
 	quickReplytmp.Payload = "Buy Product"
-	quickReplytmp.Image = "http://example.com/img/red.png"
+	quickReplytmp.Image = "https://www.freeiconspng.com/uploads/yes-png-9.png"
 
 	quickReply = append(quickReply, quickReplytmp)
 
+	//Quick Reply for No
 	quickReplytmp.Content_Type = "text"
 	quickReplytmp.Title = "No"
 	quickReplytmp.Payload = "Don't Buy Product"
-	quickReplytmp.Image = "http://example.com/img/green.png"
+	quickReplytmp.Image = "https://www.freeiconspng.com/uploads/no-image-icon-9.png"
 
 	quickReply = append(quickReply, quickReplytmp)
 
@@ -69,7 +72,10 @@ func handleMessageWithQuickReply(senderId, message string) error {
 		log.Printf("Failed doing request: %s", err)
 		return err
 	}
-	log.Printf("MESSAGE SENT?\n%#v", res)
+	if res.Status != "200 OK" {
+		log.Printf("MESSAGE SENT?\n%#v", res)
+		return errors.New("msg not sent")
+	}
 	return nil
 }
 
@@ -110,21 +116,24 @@ func handleMessageWithoutQuickReply(senderId, message string) error {
 		log.Printf("Failed doing request: %s", err)
 		return err
 	}
-	log.Printf("MESSAGE SENT?\n%#v", res)
+	if res.Status != "200 OK" {
+		log.Printf("MESSAGE SENT?\n%#v", res)
+		return errors.New("msg not sent")
+	}
 	return nil
 }
 
-func SendReviewTemplate(senderId string) error {
+func SendReviewTemplate(senderId string, template *entity.Template) error {
 
 	followUp := entity.FollowUpType{
 		Type:        "free_form",
-		Placeholder: "Give additional feedback",
+		Placeholder: template.Placeholder,
 	}
 
 	question := entity.QuestionType{
 		ID:           "myquestion1",
 		Type:         "csat",
-		Title:        "How would you rate our product?",
+		Title:        template.Title,
 		Score_Label:  "neg_pos",
 		Score_Option: "five_stars",
 		FollowUp:     followUp,
@@ -184,6 +193,9 @@ func SendReviewTemplate(senderId string) error {
 		log.Printf("Failed doing request: %s", err)
 		return err
 	}
-	log.Printf("MESSAGE SENT?\n%#v", res)
+	if res.Status != "200 OK" {
+		log.Printf("MESSAGE SENT?\n%#v", res)
+		return errors.New("msg not sent")
+	}
 	return nil
 }

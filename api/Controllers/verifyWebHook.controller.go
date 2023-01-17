@@ -3,10 +3,11 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"os"
 )
 
 func (server *Server) VerifyWebhook(resp http.ResponseWriter, request *http.Request) {
-	secretKey := "secret_token123"
+	secretKey := os.Getenv("SECRET_TOKEN")
 	if request.Method == "GET" {
 		mode := request.URL.Query().Get("hub.mode")
 		challenge := request.URL.Query().Get("hub.challenge")
