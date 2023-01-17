@@ -3,6 +3,7 @@ package controllers
 import (
 	"flag"
 	"log"
+	"net/http"
 
 	entity "github.com/Thodoris-el/Coonectly-Project/api/Entity"
 	"github.com/gorilla/mux"
@@ -41,5 +42,5 @@ func (server *Server) Run() {
 	flag.Parse()
 
 	log.Printf("Server started on %s", *port)
-	//log.Fatal(http.ListenAndServe(":"+*port, server.Router))
+	log.Fatal(http.ListenAndServe(":"+*port, server.Router))
 }
