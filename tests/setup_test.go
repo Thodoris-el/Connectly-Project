@@ -51,13 +51,29 @@ func refreshTables() {
 	server.DB.AutoMigrate(&entity.Customer{})
 
 	server.DB.Migrator().DropTable(&entity.Review{})
-
 	server.DB.AutoMigrate(&entity.Review{})
 
 	server.DB.Migrator().DropTable(&entity.Conversation{})
-
 	server.DB.AutoMigrate(&entity.Conversation{})
 
+	server.DB.Migrator().DropTable(&entity.Template{})
+	server.DB.AutoMigrate(&entity.Template{})
+
+}
+
+func createATemplate() (entity.Template, error) {
+	template := entity.Template{
+		Title:       "How would you rate our product?",
+		Placeholder: "Give additional feedback",
+		Language:    "eng",
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
+	err := server.DB.Model(&entity.Template{}).Create(&template).Error
+	if err != nil {
+		return entity.Template{}, err
+	}
+	return template, nil
 }
 
 func createACustomer() (entity.Customer, error) {
@@ -66,6 +82,7 @@ func createACustomer() (entity.Customer, error) {
 		Last_name:    "Dir",
 		Facebook_id:  "6706612322695175",
 		Sent_Message: true,
+		Language:     "eng",
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),
 	}

@@ -17,6 +17,11 @@ func TestHandleMessanger(t *testing.T) {
 		log.Fatal(err)
 	}
 
+	_, err = createATemplate()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	resmsg := []string{"buy", "review", "buy", "none", "none"}
 	msg := []string{"Buy a car", "Yes", "Buy a Bike", "No", "hello"}
 	for i, fbmess := range createMessages(msg) {
