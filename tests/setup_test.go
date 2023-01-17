@@ -15,9 +15,6 @@ import (
 )
 
 var server = controllers.Server{}
-var customerInsatnce = entity.Customer{}
-var conversationInstance = entity.Conversation{}
-var reviewInstance = entity.Review{}
 
 func TestMain(m *testing.M) {
 	err := godotenv.Load(os.ExpandEnv("./../.env"))
@@ -162,4 +159,116 @@ func createMessageReview() entity.FacebookMessage {
 	}
 
 	return reqBody
+}
+
+func createTwoCustomers() ([]entity.Customer, error) {
+	customers := []entity.Customer{
+		entity.Customer{
+			First_name:   "John",
+			Last_name:    "Dir",
+			Facebook_id:  "6706612322695175",
+			Sent_Message: true,
+			CreatedAt:    time.Now(),
+			UpdatedAt:    time.Now(),
+		},
+		entity.Customer{
+			First_name:   "Nick",
+			Last_name:    "Dir",
+			Facebook_id:  "8006612322695175",
+			Sent_Message: true,
+			CreatedAt:    time.Now(),
+			UpdatedAt:    time.Now(),
+		},
+	}
+	for _, customer := range customers {
+		err := server.DB.Model(&entity.Customer{}).Create(&customer).Error
+		if err != nil {
+			return []entity.Customer{}, err
+		}
+	}
+
+	return customers, nil
+}
+
+func createAConversation() (entity.Conversation, error) {
+	conversation := entity.Conversation{
+		Facebook_id: "6706612322695175",
+		Stage:       "None",
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
+	err := server.DB.Model(&entity.Conversation{}).Create(&conversation).Error
+	if err != nil {
+		return entity.Conversation{}, err
+	}
+
+	return conversation, nil
+}
+
+func createTwoConversations() ([]entity.Conversation, error) {
+	conversations := []entity.Conversation{
+		entity.Conversation{
+			Facebook_id: "6706612322695175",
+			Stage:       "None",
+			CreatedAt:   time.Now(),
+			UpdatedAt:   time.Now(),
+		},
+		entity.Conversation{
+			Facebook_id: "8006612322695175",
+			Stage:       "None",
+			CreatedAt:   time.Now(),
+			UpdatedAt:   time.Now(),
+		},
+	}
+	for _, conversation := range conversations {
+		err := server.DB.Model(&entity.Conversation{}).Create(&conversation).Error
+		if err != nil {
+			return []entity.Conversation{}, err
+		}
+	}
+
+	return conversations, nil
+}
+
+func createAReview() (entity.Review, error) {
+	review := entity.Review{
+		Customer_id: "6706612322695175",
+		Text:        "1",
+		Score:       1,
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
+	err := server.DB.Model(&entity.Review{}).Create(&review).Error
+	if err != nil {
+		return entity.Review{}, err
+	}
+
+	return review, nil
+}
+
+func createTwoReviews() ([]entity.Review, error) {
+	reviews := []entity.Review{
+		entity.Review{
+			Customer_id: "6706612322695175",
+			Text:        "1",
+			Score:       1,
+			CreatedAt:   time.Now(),
+			UpdatedAt:   time.Now(),
+		},
+		entity.Review{
+			Customer_id: "8006612322695175",
+			Text:        "2",
+			Score:       2,
+			CreatedAt:   time.Now(),
+			UpdatedAt:   time.Now(),
+		},
+	}
+	for _, review := range reviews {
+		err := server.DB.Model(&entity.Review{}).Create(&review).Error
+		if err != nil {
+			return []entity.Review{}, err
+		}
+	}
+
+	return reviews, nil
 }
