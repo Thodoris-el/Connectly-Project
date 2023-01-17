@@ -35,7 +35,7 @@ func TestCreateCustomer(t *testing.T) {
 		handler.ServeHTTP(recorded, req)
 
 		resp := make(map[string]interface{})
-		err = json.Unmarshal([]byte(recorded.Body.String()), &resp)
+		err = json.Unmarshal(recorded.Body.Bytes(), &resp)
 		if err != nil {
 			t.Errorf("cant vonvert json: %v\n", err)
 		}
