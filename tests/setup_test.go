@@ -180,7 +180,7 @@ func createMessageReview() entity.FacebookMessage {
 
 func createTwoCustomers() ([]entity.Customer, error) {
 	customers := []entity.Customer{
-		entity.Customer{
+		{
 			First_name:   "John",
 			Last_name:    "Dir",
 			Facebook_id:  "6706612322695175",
@@ -188,7 +188,7 @@ func createTwoCustomers() ([]entity.Customer, error) {
 			CreatedAt:    time.Now(),
 			UpdatedAt:    time.Now(),
 		},
-		entity.Customer{
+		{
 			First_name:   "Nick",
 			Last_name:    "Dir",
 			Facebook_id:  "8006612322695175",
@@ -224,13 +224,13 @@ func createAConversation() (entity.Conversation, error) {
 
 func createTwoConversations() ([]entity.Conversation, error) {
 	conversations := []entity.Conversation{
-		entity.Conversation{
+		{
 			Facebook_id: "6706612322695175",
 			Stage:       "None",
 			CreatedAt:   time.Now(),
 			UpdatedAt:   time.Now(),
 		},
-		entity.Conversation{
+		{
 			Facebook_id: "8006612322695175",
 			Stage:       "None",
 			CreatedAt:   time.Now(),
@@ -265,14 +265,14 @@ func createAReview() (entity.Review, error) {
 
 func createTwoReviews() ([]entity.Review, error) {
 	reviews := []entity.Review{
-		entity.Review{
+		{
 			Customer_id: "6706612322695175",
 			Text:        "1",
 			Score:       1,
 			CreatedAt:   time.Now(),
 			UpdatedAt:   time.Now(),
 		},
-		entity.Review{
+		{
 			Customer_id: "8006612322695175",
 			Text:        "2",
 			Score:       2,
