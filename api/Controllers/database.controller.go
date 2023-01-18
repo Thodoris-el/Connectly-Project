@@ -3,7 +3,6 @@ package controllers
 import (
 	"log"
 	"net/http"
-	"os"
 
 	entity "github.com/Thodoris-el/Coonectly-Project/api/Entity"
 	"github.com/gorilla/mux"
@@ -17,11 +16,14 @@ type Server struct {
 	Router *mux.Router
 }
 
+//Initialize Database
 func (server *Server) Initialize(Db_user, Db_password, Db_host, Db_name, Db_port string) {
 	var err error
 
-	//dsn := Db_user + ":" + Db_password + "@tcp" + "(" + Db_host + ":" + Db_port + ")/" + Db_name + "?" + "parseTime=true&loc=Local"
-	dsn := os.Getenv("DSN_NAME") + ":" + os.Getenv("DSN_PASSWORD") + "@tcp(aws-eu-west-2.connect.psdb.cloud)/connectly_project?tls=true&parseTime=true&loc=Local"
+	//use for a local database
+	dsn := Db_user + ":" + Db_password + "@tcp" + "(" + Db_host + ":" + Db_port + ")/" + Db_name + "?" + "parseTime=true&loc=Local"
+	//use for a hosted database
+	//dsn := os.Getenv("DSN_NAME") + ":" + os.Getenv("DSN_PASSWORD") + "@tcp(aws-eu-west-2.connect.psdb.cloud)/connectly_project?tls=true&parseTime=true&loc=Local"
 	server.DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {

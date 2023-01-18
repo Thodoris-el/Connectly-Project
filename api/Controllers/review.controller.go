@@ -12,6 +12,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+//Create a Review
 func (server *Server) CreateReview(resp http.ResponseWriter, request *http.Request) {
 
 	body, err := io.ReadAll(request.Body)
@@ -45,6 +46,7 @@ func (server *Server) CreateReview(resp http.ResponseWriter, request *http.Reque
 	}
 }
 
+//Get all reviews
 func (server *Server) GetReviews(resp http.ResponseWriter, request *http.Request) {
 
 	review := entity.Review{}
@@ -63,6 +65,7 @@ func (server *Server) GetReviews(resp http.ResponseWriter, request *http.Request
 	}
 }
 
+//Get review by ID
 func (server *Server) GetReviewById(resp http.ResponseWriter, request *http.Request) {
 
 	vars := mux.Vars(request)
@@ -88,6 +91,7 @@ func (server *Server) GetReviewById(resp http.ResponseWriter, request *http.Requ
 	}
 }
 
+//Get review by customer ID
 func (server *Server) GetReviewByCustomerId(resp http.ResponseWriter, request *http.Request) {
 
 	vars := mux.Vars(request)
@@ -109,6 +113,7 @@ func (server *Server) GetReviewByCustomerId(resp http.ResponseWriter, request *h
 	}
 }
 
+//Add Review
 func (server *Server) AddReview(senderID, text, score string) error {
 
 	var err error
@@ -148,6 +153,7 @@ func (server *Server) AddReview(senderID, text, score string) error {
 	return nil
 }
 
+//Update Review
 func (server *Server) UpdateReview(resp http.ResponseWriter, request *http.Request) {
 
 	vars := mux.Vars(request)
@@ -183,6 +189,7 @@ func (server *Server) UpdateReview(resp http.ResponseWriter, request *http.Reque
 	}
 }
 
+//Delete Review
 func (server *Server) DeleteReview(resp http.ResponseWriter, request *http.Request) {
 
 	vars := mux.Vars(request)

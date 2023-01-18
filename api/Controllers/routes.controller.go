@@ -1,6 +1,14 @@
 package controllers
 
+import "net/http"
+
 func (server *Server) startRoutes() {
+
+	server.Router.HandleFunc("/", func(resp http.ResponseWriter, request *http.Request) {
+		resp.WriteHeader(http.StatusOK)
+		resp.Write([]byte("server working"))
+	}).Methods("GET")
+
 	//WebHook Verification
 	server.Router.HandleFunc("/webhook", server.VerifyWebhook).Methods("GET")
 

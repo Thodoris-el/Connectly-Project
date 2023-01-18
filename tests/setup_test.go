@@ -134,7 +134,7 @@ func createMessageReview() entity.FacebookMessage {
 		ScreenID: 0,
 		Questions: entity.QuesTypeRes{
 			Myquestion1: entity.MyQuestionType{
-				Type:    "CSAT",
+				Type:    "csat",
 				Payload: "3",
 				FollowUp: entity.FollowUpTypeRes{
 					Type:    "free_form",
@@ -288,4 +288,28 @@ func createTwoReviews() ([]entity.Review, error) {
 	}
 
 	return reviews, nil
+}
+
+func createTwoTemplates() ([]entity.Template, error) {
+	template := []entity.Template{
+		{
+			Title:       "How would you rate our product?",
+			Placeholder: "Give additional feedback",
+			Language:    "eng",
+			CreatedAt:   time.Now(),
+			UpdatedAt:   time.Now(),
+		},
+		{
+			Title:       "How would you rate our product?",
+			Placeholder: "Give additional feedback",
+			Language:    "eng",
+			CreatedAt:   time.Now(),
+			UpdatedAt:   time.Now(),
+		},
+	}
+	err := server.DB.Model(&entity.Template{}).Create(&template).Error
+	if err != nil {
+		return []entity.Template{}, err
+	}
+	return template, nil
 }

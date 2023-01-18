@@ -113,6 +113,7 @@ func (server *Server) GetConversationByCustomerId(resp http.ResponseWriter, requ
 	}
 }
 
+//Update Conversation
 func (server *Server) UpdateConversation(resp http.ResponseWriter, request *http.Request) {
 
 	vars := mux.Vars(request)
@@ -148,6 +149,7 @@ func (server *Server) UpdateConversation(resp http.ResponseWriter, request *http
 	}
 }
 
+//Delete Conversation
 func (server *Server) DeleteConversation(resp http.ResponseWriter, request *http.Request) {
 
 	vars := mux.Vars(request)

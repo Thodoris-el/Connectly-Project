@@ -59,7 +59,7 @@ func (customer *Customer) FindCustomerByID(db *gorm.DB, C_id int64) (*Customer, 
 	return customer, err
 }
 
-//Find All Reviews from a specific customer
+//Find customer by facebook id
 func (customer *Customer) FindByFacebookId(db *gorm.DB, F_id string) (*Customer, error) {
 
 	err := db.Debug().Model(&Customer{}).Where("facebook_id = ?", F_id).Take(&customer).Error

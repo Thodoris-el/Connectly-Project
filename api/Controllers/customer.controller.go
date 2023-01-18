@@ -12,6 +12,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+//Create a customer
 func (server *Server) CreateCustomer(resp http.ResponseWriter, request *http.Request) {
 
 	body, err := io.ReadAll(request.Body)
@@ -46,6 +47,7 @@ func (server *Server) CreateCustomer(resp http.ResponseWriter, request *http.Req
 
 }
 
+//Get all customers
 func (server *Server) GetCustomers(resp http.ResponseWriter, request *http.Request) {
 
 	customer := entity.Customer{}
@@ -64,6 +66,7 @@ func (server *Server) GetCustomers(resp http.ResponseWriter, request *http.Reque
 	}
 }
 
+//Get Customer By Id
 func (server *Server) GetCustomerById(resp http.ResponseWriter, request *http.Request) {
 
 	vars := mux.Vars(request)
@@ -89,6 +92,7 @@ func (server *Server) GetCustomerById(resp http.ResponseWriter, request *http.Re
 	}
 }
 
+//Update Customer
 func (server *Server) UpdateCustomer(resp http.ResponseWriter, request *http.Request) {
 
 	vars := mux.Vars(request)
@@ -124,6 +128,7 @@ func (server *Server) UpdateCustomer(resp http.ResponseWriter, request *http.Req
 	}
 }
 
+//Delet Customer
 func (server *Server) DeleteCustomer(resp http.ResponseWriter, request *http.Request) {
 
 	vars := mux.Vars(request)

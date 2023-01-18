@@ -55,6 +55,8 @@ func TestHandleMessanger(t *testing.T) {
 
 		if res.Header.Get("action") != resmsg[i] {
 			t.Errorf("expected %v got %v", resmsg[i], res.Header.Get("action"))
+		} else {
+			log.Println(resmsg[i])
 		}
 	}
 }
