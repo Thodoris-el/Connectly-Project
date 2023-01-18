@@ -5,10 +5,10 @@ services:
     ports:
       - "3305:3306"
     environment:
-      - "MYSQL_ROOT_PASSWORD=${DB_PASSWORD}"
-      - "MYSQL_USER=${DB_USERNAME}"
-      - "MYSQL_PASSWORD=${DB_PASSWORD}"
-      - "MYSQL_DATABASE=${DB_NAME}"   
+      - "MYSQL_ROOT_PASSWORD=${DSN_PASSWORD}"
+      - "MYSQL_USER=${DSN_NAME}"
+      - "MYSQL_PASSWORD=${DSN_PASSWORD}"
+      - "MYSQL_DATABASE=${DSN_DB_NAME}"   
   web:
     build: .
     ports:
@@ -26,9 +26,9 @@ services:
       - db
     environment:
       - PMA_HOST=db
-      - PMA_USER=${DB_USERNAME}
+      - PMA_USER=${DSN_NAME}
       - PMA_PORT=${DB_PORT}
-      - PMA_PASSWORD=${DB_PASSWORD}
+      - PMA_PASSWORD=${DSN_PASSWORD}
     ports:
       - 9090:80
     restart: always
