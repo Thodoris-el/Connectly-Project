@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"flag"
 	"log"
 	"net/http"
 	"os"
@@ -38,10 +37,10 @@ func (server *Server) Initialize(Db_user, Db_password, Db_host, Db_name, Db_port
 }
 
 func (server *Server) Run() {
-	//port := ":8000"
-	port := flag.String("port", "8000", "specify a port")
-	flag.Parse()
+	port := ":5000"
+	//port := flag.String("port", "8000", "specify a port")
+	//flag.Parse()
 
-	log.Printf("Server started on %s", *port)
-	log.Fatal(http.ListenAndServe(":"+*port, server.Router))
+	log.Printf("Server started on %s", port)
+	log.Fatal(http.ListenAndServe(port, server.Router))
 }
