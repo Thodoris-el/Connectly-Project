@@ -364,8 +364,22 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 					switch everyAttachment.Type {
 					case "template":
 						log.Println(sender, recipient, everyAttachment.Payload.Product.Title)
+						err = handleMessageWithoutQuickReply(sender.ID, "Didn't understand this! Tell us what product you want to buy")
+						if err != nil {
+							log.Println(err.Error())
+							return
+						}
+						resp.Header().Add("action", "none")
+						return
 					default:
 						log.Println(sender, recipient, "image: ", everyAttachment.Payload.URL)
+						err = handleMessageWithoutQuickReply(sender.ID, "Didn't understand this! Tell us what product you want to buy")
+						if err != nil {
+							log.Println(err.Error())
+							return
+						}
+						resp.Header().Add("action", "none")
+						return
 					}
 				}
 			}

@@ -12,7 +12,7 @@ import (
 //Structure of the Conversation Entity
 type Conversation struct {
 	ID          int64  `gorm:"primary_key;auto_increment" json:"id"`
-	Facebook_id string `gorm:"not null;unique" json:"facebook_id"`
+	Facebook_id string `gorm:"not null;unique;" json:"facebook_id"`
 	Stage       string `gorm:"default:None" json:"stage"`
 	CreatedAt   time.Time
 	UpdatedAt   time.Time

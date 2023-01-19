@@ -10,14 +10,13 @@ import (
 
 //Structure of the Customer Entity
 type Customer struct {
-	ID           int64  `gorm:"primary_key;auto_increment" json:"id"`
-	First_name   string `gorm:"size:255;not null;" json:"first_name"`
-	Last_name    string `gorm:"size:255;not null;" json:"last_name"`
-	Facebook_id  string `gorm:"not null;" json:"facebook_id"`
-	Sent_Message bool   `gorm:"default:false" json:"sent_message"`
-	Language     string `gorm:"default:eng" json:"language"`
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
+	ID          int64  `gorm:"primary_key;auto_increment" json:"id"`
+	First_name  string `gorm:"size:255;not null;" json:"first_name"`
+	Last_name   string `gorm:"size:255;not null;" json:"last_name"`
+	Facebook_id string `gorm:"not null;unique;" json:"facebook_id"`
+	Language    string `gorm:"default:eng" json:"language"`
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 //Save Customer Function to DB
@@ -90,12 +89,11 @@ func (customer *Customer) UpdateCustomer(db *gorm.DB, C_id int64) (*Customer, er
 	defer cancel()
 	db = db.WithContext(ctx).Debug().Model(&Customer{}).Where("id = ?", C_id).Take(&Customer{}).UpdateColumns(
 		map[string]interface{}{
-			"first_name":   customer.First_name,
-			"last_name":    customer.Last_name,
-			"facebook_id":  customer.Facebook_id,
-			"language":     customer.Language,
-			"sent_message": customer.Sent_Message,
-			"updated_at":   time.Now(),
+			"first_name":  customer.First_name,
+			"last_name":   customer.Last_name,
+			"facebook_id": customer.Facebook_id,
+			"language":    customer.Language,
+			"updated_at":  time.Now(),
 		},
 	)
 	err := db.WithContext(ctx).Debug().Model(&Customer{}).Where("id = ?", C_id).Take(&customer).Error

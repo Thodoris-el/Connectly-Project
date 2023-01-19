@@ -6,6 +6,7 @@ import (
 
 func (server *Server) startRoutes() {
 
+	//home route -> just responds that the server is working
 	server.Router.HandleFunc("/", func(resp http.ResponseWriter, request *http.Request) {
 		resp.WriteHeader(http.StatusOK)
 		resp.Write([]byte("server working"))
