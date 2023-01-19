@@ -204,7 +204,7 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 			}
 			//if user message via quick anser
 			if message.QuickReply.Payload != "" {
-				log.Println(message.QuickReply.Payload)
+				log.Println(message)
 				str, err := server.HandleMessengeQuickReply(message, *new_conversation, sender.ID)
 				if err != nil {
 					log.Println(err)
@@ -224,7 +224,7 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 			} else if message.Attachments == nil {
 
 				//Buy is a trigger word
-				if strings.Contains(message.Text, "Buy") {
+				if strings.HasPrefix(message.Text, "Buy a ") {
 					new_conversation.Stage = "Buy"
 					_, err = new_conversation.UpdateConversation(server.DB, new_conversation.ID)
 					if err != nil {
