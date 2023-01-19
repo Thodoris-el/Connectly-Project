@@ -204,6 +204,7 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 			}
 			//if user message via quick anser
 			if message.QuickReply.Payload != "" {
+				log.Println(message.QuickReply.Payload)
 				str, err := server.HandleMessengeQuickReply(message, *new_conversation, sender.ID)
 				if err != nil {
 					log.Println(err)

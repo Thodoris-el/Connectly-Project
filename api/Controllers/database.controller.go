@@ -44,6 +44,7 @@ func (server *Server) Run() {
 	//port := flag.String("port", "8000", "specify a port")
 	//flag.Parse()
 
+	//serverWithTimeOut := http.TimeoutHandler(server.Router, time.Millisecond*10, "Timeout!")
 	log.Printf("Server started on %s", port)
 	log.Fatal(http.ListenAndServe(port, server.Router))
 }

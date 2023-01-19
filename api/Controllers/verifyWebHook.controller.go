@@ -7,7 +7,6 @@ import (
 )
 
 func (server *Server) VerifyWebhook(resp http.ResponseWriter, request *http.Request) {
-
 	secretKey := os.Getenv("SECRET_TOKEN")
 	if request.Method == "GET" {
 		mode := request.URL.Query().Get("hub.mode")
