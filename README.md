@@ -129,4 +129,5 @@ This entity is used to read Facebook Messages and send messages.
 
 ##### Example of Facebook Get Message
 
-![Facebook Get Message Example](https://i.ibb.co/P1Vt6Bs/Screenshot-5.png)
+![Facebook Get Message Example](https://i.ibb.co/37dBCT2/Screenshot-6.png)
+
