@@ -16,10 +16,10 @@ func TestCreateConversation(t *testing.T) {
 	refreshTables()
 
 	samples := []string{
-		`{"facebook_id": "6706612322695175","stage": "buy"}`,
-		`{"facebook_id": "8706612322695175","stage": "none"}`,
-		`{"facebook_id": "9806612322695175","stage": "review"}`,
-		`{"facebook_id": "6798612322695175","stage": "none"}`,
+		`{"facebook_id": "6706612322695175","stage": "buy","product": "bike"}`,
+		`{"facebook_id": "8706612322695175","stage": "none","product": ""}`,
+		`{"facebook_id": "9806612322695175","stage": "review","product": "bike"}`,
+		`{"facebook_id": "6798612322695175","stage": "none","product": ""}`,
 	}
 	answers := []string{
 		"buy",

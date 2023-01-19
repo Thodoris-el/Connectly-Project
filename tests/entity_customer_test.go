@@ -12,12 +12,11 @@ func TestSaveCustomer(t *testing.T) {
 	refreshTables()
 
 	testCustomer := entity.Customer{
-		First_name:   "John",
-		Last_name:    "Dir",
-		Facebook_id:  "6706612322695175",
-		Sent_Message: true,
-		CreatedAt:    time.Now(),
-		UpdatedAt:    time.Now(),
+		First_name:  "John",
+		Last_name:   "Dir",
+		Facebook_id: "6706612322695175",
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
 	}
 
 	savedCutomer, err := testCustomer.SaveCustomer(server.DB)
@@ -27,7 +26,7 @@ func TestSaveCustomer(t *testing.T) {
 		return
 	}
 
-	if !(testCustomer.First_name == savedCutomer.First_name && testCustomer.Last_name == savedCutomer.Last_name && testCustomer.Facebook_id == savedCutomer.Facebook_id && testCustomer.Sent_Message == savedCutomer.Sent_Message) {
+	if !(testCustomer.First_name == savedCutomer.First_name && testCustomer.Last_name == savedCutomer.Last_name && testCustomer.Facebook_id == savedCutomer.Facebook_id) {
 		t.Errorf("wrong values")
 	}
 }
@@ -72,7 +71,7 @@ func TestFindCustomerByID(t *testing.T) {
 		return
 	}
 
-	if !(testCustomer.First_name == getC.First_name && testCustomer.Last_name == getC.Last_name && testCustomer.Facebook_id == getC.Facebook_id && testCustomer.Sent_Message == getC.Sent_Message) {
+	if !(testCustomer.First_name == getC.First_name && testCustomer.Last_name == getC.Last_name && testCustomer.Facebook_id == getC.Facebook_id) {
 		t.Errorf("wrong values")
 	}
 }
@@ -95,7 +94,7 @@ func TestUpdateCustomer(t *testing.T) {
 		return
 	}
 
-	if !(testCustomer.First_name == getC.First_name && testCustomer.Last_name == getC.Last_name && testCustomer.Facebook_id == getC.Facebook_id && testCustomer.Sent_Message == getC.Sent_Message) {
+	if !(testCustomer.First_name == getC.First_name && testCustomer.Last_name == getC.Last_name && testCustomer.Facebook_id == getC.Facebook_id) {
 		t.Errorf("wrong values")
 	}
 }

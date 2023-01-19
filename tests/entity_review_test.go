@@ -98,6 +98,28 @@ func TestFindReviewByCustomerID(t *testing.T) {
 	}
 }
 
+func TestFindReviewProduct(t *testing.T) {
+
+	refreshTables()
+
+	testReview, err := createAReview()
+
+	if err != nil {
+		t.Errorf("error creating the Review: %v\n", err)
+		return
+	}
+
+	getR, err := testReview.FindByProduct(server.DB, "car")
+	if err != nil {
+		t.Errorf("error fetching the Review: %v\n", err)
+		return
+	}
+
+	if len(*getR) != 1 {
+		t.Errorf("wrong number of Reviews")
+	}
+}
+
 func TestUpdateReview(t *testing.T) {
 
 	refreshTables()

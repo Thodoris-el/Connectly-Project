@@ -133,6 +133,35 @@ func TestGetReviewByCustomerId(t *testing.T) {
 	}
 }
 
+func TestGetReviewByProduct(t *testing.T) {
+
+	refreshTables()
+
+	_, err := createAReview()
+	if err != nil {
+		t.Errorf("error creating a review")
+	}
+
+	req, err := http.NewRequest("GET", "/review/product", nil)
+	if err != nil {
+		t.Errorf("error: %v\n", err)
+	}
+	req = mux.SetURLVars(req, map[string]string{"product": "car"})
+	recorded := httptest.NewRecorder()
+	handler := http.HandlerFunc(server.GetReviewByProduct)
+	handler.ServeHTTP(recorded, req)
+
+	var reviews []entity.Review
+	err = json.Unmarshal(recorded.Body.Bytes(), &reviews)
+	if err != nil {
+		log.Println(err)
+		t.Errorf("error while unmarshal")
+	}
+	if len(reviews) != 1 {
+		t.Errorf("wrong value")
+	}
+}
+
 func TestUpdateReviewC(t *testing.T) {
 
 	refreshTables()

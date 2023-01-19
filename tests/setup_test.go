@@ -78,13 +78,12 @@ func createATemplate() (entity.Template, error) {
 
 func createACustomer() (entity.Customer, error) {
 	customer := entity.Customer{
-		First_name:   "John",
-		Last_name:    "Dir",
-		Facebook_id:  "6706612322695175",
-		Sent_Message: true,
-		Language:     "eng",
-		CreatedAt:    time.Now(),
-		UpdatedAt:    time.Now(),
+		First_name:  "John",
+		Last_name:   "Dir",
+		Facebook_id: "6706612322695175",
+		Language:    "eng",
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
 	}
 	err := server.DB.Model(&entity.Customer{}).Create(&customer).Error
 	if err != nil {
@@ -181,20 +180,18 @@ func createMessageReview() entity.FacebookMessage {
 func createTwoCustomers() ([]entity.Customer, error) {
 	customers := []entity.Customer{
 		{
-			First_name:   "John",
-			Last_name:    "Dir",
-			Facebook_id:  "6706612322695175",
-			Sent_Message: true,
-			CreatedAt:    time.Now(),
-			UpdatedAt:    time.Now(),
+			First_name:  "John",
+			Last_name:   "Dir",
+			Facebook_id: "6706612322695175",
+			CreatedAt:   time.Now(),
+			UpdatedAt:   time.Now(),
 		},
 		{
-			First_name:   "Nick",
-			Last_name:    "Dir",
-			Facebook_id:  "8006612322695175",
-			Sent_Message: true,
-			CreatedAt:    time.Now(),
-			UpdatedAt:    time.Now(),
+			First_name:  "Nick",
+			Last_name:   "Dir",
+			Facebook_id: "8006612322695175",
+			CreatedAt:   time.Now(),
+			UpdatedAt:   time.Now(),
 		},
 	}
 	for _, customer := range customers {
@@ -211,6 +208,7 @@ func createAConversation() (entity.Conversation, error) {
 	conversation := entity.Conversation{
 		Facebook_id: "6706612322695175",
 		Stage:       "None",
+		Product:     "",
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	}
@@ -227,12 +225,14 @@ func createTwoConversations() ([]entity.Conversation, error) {
 		{
 			Facebook_id: "6706612322695175",
 			Stage:       "None",
+			Product:     "",
 			CreatedAt:   time.Now(),
 			UpdatedAt:   time.Now(),
 		},
 		{
 			Facebook_id: "8006612322695175",
 			Stage:       "None",
+			Product:     "",
 			CreatedAt:   time.Now(),
 			UpdatedAt:   time.Now(),
 		},
@@ -252,6 +252,7 @@ func createAReview() (entity.Review, error) {
 		Customer_id: "6706612322695175",
 		Text:        "1",
 		Score:       1,
+		Product:     "car",
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	}
@@ -269,6 +270,7 @@ func createTwoReviews() ([]entity.Review, error) {
 			Customer_id: "6706612322695175",
 			Text:        "1",
 			Score:       1,
+			Product:     "car",
 			CreatedAt:   time.Now(),
 			UpdatedAt:   time.Now(),
 		},
@@ -276,6 +278,7 @@ func createTwoReviews() ([]entity.Review, error) {
 			Customer_id: "8006612322695175",
 			Text:        "2",
 			Score:       2,
+			Product:     "bike",
 			CreatedAt:   time.Now(),
 			UpdatedAt:   time.Now(),
 		},
