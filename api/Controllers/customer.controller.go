@@ -92,6 +92,28 @@ func (server *Server) GetCustomerById(resp http.ResponseWriter, request *http.Re
 	}
 }
 
+//Get Customer By facebook id
+func (server *Server) GetCustomerByFacebookId(resp http.ResponseWriter, request *http.Request) {
+
+	vars := mux.Vars(request)
+	C_id := vars["facebook_id"]
+
+	customer := entity.Customer{}
+
+	customerGet, err := customer.FindByFacebookId(server.DB, C_id)
+	if err != nil {
+		http.Error(resp, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	resp.Header().Set("Content-Type", "application/json")
+	resp.WriteHeader(http.StatusOK)
+	err = json.NewEncoder(resp).Encode(customerGet)
+	if err != nil {
+		log.Println(err)
+	}
+}
+
 //Update Customer
 func (server *Server) UpdateCustomer(resp http.ResponseWriter, request *http.Request) {
 

@@ -19,6 +19,7 @@ func (server *Server) startRoutes() {
 	server.Router.HandleFunc("/customer", server.CreateCustomer).Methods("POST")
 	server.Router.HandleFunc("/customer", server.GetCustomers).Methods("GET")
 	server.Router.HandleFunc("/customer/{id}", server.GetCustomerById).Methods("GET")
+	server.Router.HandleFunc("/customer/facebook/{facebook_id}", server.GetCustomerByFacebookId).Methods("GET")
 	server.Router.HandleFunc("/customer/{id}", server.UpdateCustomer).Methods("PUT")
 	server.Router.HandleFunc("/customer/{id}", server.DeleteCustomer).Methods("DELETE")
 

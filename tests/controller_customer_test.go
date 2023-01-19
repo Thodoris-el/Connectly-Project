@@ -103,6 +103,34 @@ func TestGetCustomerById(t *testing.T) {
 	}
 }
 
+func TestGetCustomerByFacebookId(t *testing.T) {
+
+	refreshTables()
+
+	_, err := createACustomer()
+	if err != nil {
+		t.Errorf("error creating a customer")
+	}
+
+	req, err := http.NewRequest("GET", "/customer/facebook", nil)
+	if err != nil {
+		t.Errorf("error: %v\n", err)
+	}
+	req = mux.SetURLVars(req, map[string]string{"facebook_id": "6706612322695175"})
+	recorded := httptest.NewRecorder()
+	handler := http.HandlerFunc(server.GetCustomerByFacebookId)
+	handler.ServeHTTP(recorded, req)
+
+	responseMap := make(map[string]interface{})
+	err = json.Unmarshal(recorded.Body.Bytes(), &responseMap)
+	if err != nil {
+		t.Errorf("error while unmarshal")
+	}
+	if responseMap["first_name"] != "John" {
+		t.Errorf("wrong value")
+	}
+}
+
 func TestUpdateCustomerC(t *testing.T) {
 
 	refreshTables()
