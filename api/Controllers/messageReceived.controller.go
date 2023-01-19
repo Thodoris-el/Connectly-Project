@@ -13,6 +13,10 @@ import (
 	"gorm.io/gorm"
 )
 
+/*
+This is the controller that handles our receiving messages
+*/
+
 func (server *Server) HandleMessengeQuickReply(message entity.MessageType, new_conversation entity.Conversation, sender string) (string, error) {
 	//if customer replied that he bought the product
 	if message.QuickReply.Payload == "Buy Product" {
@@ -24,7 +28,7 @@ func (server *Server) HandleMessengeQuickReply(message entity.MessageType, new_c
 			return "", err
 		}
 
-		//reply to customer with thank you
+		//reply to customer with verifcation msg
 		err = handleMessageWithoutQuickReply(sender, "Purchased Done!")
 		if err != nil {
 			log.Println(err.Error())
@@ -33,19 +37,17 @@ func (server *Server) HandleMessengeQuickReply(message entity.MessageType, new_c
 		//find customer to see his language
 		customer := entity.Customer{}
 		customerGet, err := customer.FindByFacebookId(server.DB, sender)
-		//if error just reply with message
+		//if error getting the language just make use eng language for the template
+		var lang string
 		if err != nil {
-			err = handleMessageWithoutQuickReply(sender, "Please write your review as a message!")
-			if err != nil {
-				log.Println(err.Error())
-				return "", err
-			}
-			return "review", err
+			lang = "eng"
+		} else {
+			lang = customerGet.Language
 		}
 		//find the template of the review
 		template := entity.Template{}
-		templateGet, err := template.FindByLanguage(server.DB, customerGet.Language)
-		//if error just reply with message
+		templateGet, err := template.FindByLanguage(server.DB, lang)
+		//if error getting the template just reply with message
 		if err != nil {
 			err = handleMessageWithoutQuickReply(sender, "Please write your review as a message!")
 			if err != nil {
@@ -61,7 +63,7 @@ func (server *Server) HandleMessengeQuickReply(message entity.MessageType, new_c
 			return "", err
 		}
 		return "review", err
-		//if customer replied that he didnt bougth the product
+		//if customer replied that he didnt buy the product
 	} else if message.QuickReply.Payload == "Don't Buy Product" {
 		//update conversation stage to none
 		new_conversation.Stage = "None"
@@ -78,14 +80,15 @@ func (server *Server) HandleMessengeQuickReply(message entity.MessageType, new_c
 		}
 		return "none", err
 	}
-	return "", errors.New("invalid quick reply anser")
+	return "", errors.New("invalid quick reply answer")
 }
 
 func (server *Server) HandleMessageTemplate(everyfbMess entity.MessagingType, conversation, new_conversation entity.Conversation, sender string) (string, error) {
 	feedscreens := everyfbMess.Messaging_Feedback.FeedbackScreens
 	for _, everyf := range feedscreens {
-
+		//Stage with prev message was the review template
 		if conversation.Stage == "Review" {
+			//Get values from the review template
 			score := everyf.Questions.Myquestion1.Payload
 			text := everyf.Questions.Myquestion1.FollowUp.Payload
 			err := server.AddReview(sender, text, score)
@@ -99,6 +102,7 @@ func (server *Server) HandleMessageTemplate(everyfbMess entity.MessagingType, co
 				log.Println("error while creating conversation")
 				return "", err
 			}
+			//send a thank you msg
 			err = handleMessageWithoutQuickReply(sender, "Thanks for the review!.")
 			if err != nil {
 				log.Println(err.Error())
@@ -114,18 +118,16 @@ func (server *Server) SendTemplate(sender string) (string, error) {
 	//Find customer that send the message
 	customer := entity.Customer{}
 	customerGet, err := customer.FindByFacebookId(server.DB, sender)
-	//if error send the review as message
+	//if error use eng as language for the template
+	var lang string
 	if err != nil {
-		err = handleMessageWithoutQuickReply(sender, "Please write your review as a message!")
-		if err != nil {
-			log.Println(err.Error())
-			return "", err
-		}
-		return "review", err
+		lang = "eng"
+	} else {
+		lang = customerGet.Language
 	}
 	//find the template
 	template := entity.Template{}
-	templateGet, err := template.FindByLanguage(server.DB, customerGet.Language)
+	templateGet, err := template.FindByLanguage(server.DB, lang)
 	//if error send it as a message
 	if err != nil {
 		err = handleMessageWithoutQuickReply(sender, "Please write your review as a message!")
@@ -147,24 +149,23 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 	//Read the body of the request received
 	log.Println("Header: ", request.Header)
 	body, err := io.ReadAll(request.Body)
-	log.Println(string(body))
 	if err != nil {
 		log.Printf("failed to read body: %v", err)
+		http.Error(resp, err.Error(), http.StatusBadRequest)
+		return
 	}
 	//Unmarshal request
 	var facebookPost entity.FacebookMessage
 	err = json.Unmarshal(body, &facebookPost)
 	if err != nil {
 		log.Println(err)
-		resp.WriteHeader(400)
-		resp.Write([]byte("Error while unmarshal request"))
+		http.Error(resp, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	if facebookPost.Object != "page" {
 		log.Println("No fb object page")
-		resp.WriteHeader(400)
-		resp.Write([]byte("No fb object page"))
+		http.Error(resp, errors.New("no fb object == page").Error(), http.StatusBadRequest)
 	}
 
 	fbEntry := facebookPost.Entry

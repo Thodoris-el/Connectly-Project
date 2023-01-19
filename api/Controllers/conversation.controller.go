@@ -12,7 +12,16 @@ import (
 	"github.com/gorilla/mux"
 )
 
-//Create Conversation from endpoint if needed
+/*
+This is The Conversation Controller.
+Every Customer that has sent us a message, has a conversation.
+The Conversation Stage guides us to the message that the chatbot will send
+if "None" -> we hear only the trigger word "Buy"
+if "Buy" -> prev msg contains the word "Buy"
+if "Review" -> we get "Yes" in prev message and we have sent a revies
+*/
+
+//Create Conversation
 func (server *Server) CreateConversation(resp http.ResponseWriter, request *http.Request) {
 
 	body, err := io.ReadAll(request.Body)
@@ -46,7 +55,7 @@ func (server *Server) CreateConversation(resp http.ResponseWriter, request *http
 	}
 }
 
-//Get Conversations from DB
+//Get All Conversations from DB
 func (server *Server) GetConversation(resp http.ResponseWriter, request *http.Request) {
 
 	conversation := entity.Conversation{}
@@ -65,7 +74,7 @@ func (server *Server) GetConversation(resp http.ResponseWriter, request *http.Re
 	}
 }
 
-//Get Conversation By ID from DB
+//Get Conversation By ID
 func (server *Server) GetConversationById(resp http.ResponseWriter, request *http.Request) {
 
 	vars := mux.Vars(request)
@@ -91,7 +100,7 @@ func (server *Server) GetConversationById(resp http.ResponseWriter, request *htt
 	}
 }
 
-//Get Conversation by customerID from DB
+//Get Conversation by CustomerID
 func (server *Server) GetConversationByCustomerId(resp http.ResponseWriter, request *http.Request) {
 
 	vars := mux.Vars(request)

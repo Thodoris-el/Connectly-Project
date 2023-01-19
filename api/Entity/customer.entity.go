@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"context"
 	"errors"
 	"time"
 
@@ -22,7 +23,9 @@ type Customer struct {
 //Save Customer Function to DB
 func (customer *Customer) SaveCustomer(db *gorm.DB) (*Customer, error) {
 
-	err := db.Debug().Create(&customer).Error
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	err := db.WithContext(ctx).Debug().Create(&customer).Error
 	if err != nil {
 		//log.Println("error while saving customer")
 		return &Customer{}, err
@@ -35,7 +38,9 @@ func (customer *Customer) SaveCustomer(db *gorm.DB) (*Customer, error) {
 func (customer *Customer) FindAllCustomers(db *gorm.DB) (*[]Customer, error) {
 
 	customers := []Customer{}
-	err := db.Debug().Model(&Customer{}).Limit(10).Find(&customers).Error
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	err := db.WithContext(ctx).Debug().Model(&Customer{}).Limit(10).Find(&customers).Error
 
 	if err != nil {
 		//log.Println("Error while finding customers")
@@ -48,7 +53,9 @@ func (customer *Customer) FindAllCustomers(db *gorm.DB) (*[]Customer, error) {
 //find customer by Id
 func (customer *Customer) FindCustomerByID(db *gorm.DB, C_id int64) (*Customer, error) {
 
-	err := db.Debug().Model(Customer{}).Where("id = ?", C_id).Take(&customer).Error
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	err := db.WithContext(ctx).Debug().Model(Customer{}).Where("id = ?", C_id).Take(&customer).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return &Customer{}, errors.New("Customer Not Found")
@@ -62,7 +69,9 @@ func (customer *Customer) FindCustomerByID(db *gorm.DB, C_id int64) (*Customer, 
 //Find customer by facebook id
 func (customer *Customer) FindByFacebookId(db *gorm.DB, F_id string) (*Customer, error) {
 
-	err := db.Debug().Model(&Customer{}).Where("facebook_id = ?", F_id).Take(&customer).Error
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	err := db.WithContext(ctx).Debug().Model(&Customer{}).Where("facebook_id = ?", F_id).Take(&customer).Error
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -77,7 +86,9 @@ func (customer *Customer) FindByFacebookId(db *gorm.DB, F_id string) (*Customer,
 //update customer
 func (customer *Customer) UpdateCustomer(db *gorm.DB, C_id int64) (*Customer, error) {
 
-	db = db.Debug().Model(&Customer{}).Where("id = ?", C_id).Take(&Customer{}).UpdateColumns(
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	db = db.WithContext(ctx).Debug().Model(&Customer{}).Where("id = ?", C_id).Take(&Customer{}).UpdateColumns(
 		map[string]interface{}{
 			"first_name":   customer.First_name,
 			"last_name":    customer.Last_name,
@@ -87,7 +98,7 @@ func (customer *Customer) UpdateCustomer(db *gorm.DB, C_id int64) (*Customer, er
 			"updated_at":   time.Now(),
 		},
 	)
-	err := db.Debug().Model(&Customer{}).Where("id = ?", C_id).Take(&customer).Error
+	err := db.WithContext(ctx).Debug().Model(&Customer{}).Where("id = ?", C_id).Take(&customer).Error
 	if err != nil {
 		return &Customer{}, err
 	}
@@ -96,7 +107,9 @@ func (customer *Customer) UpdateCustomer(db *gorm.DB, C_id int64) (*Customer, er
 
 //delete customer
 func (customer *Customer) DeleteCustomer(db *gorm.DB, C_id int64) (int64, error) {
-	db = db.Debug().Model(&Customer{}).Where("id = ?", C_id).Take(&Customer{}).Delete(&Customer{})
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	db = db.WithContext(ctx).Debug().Model(&Customer{}).Where("id = ?", C_id).Take(&Customer{}).Delete(&Customer{})
 
 	if db.Error != nil {
 		return 0, db.Error

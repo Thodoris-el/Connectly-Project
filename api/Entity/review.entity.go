@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"context"
 	"log"
 	"time"
 
@@ -19,7 +20,9 @@ type Review struct {
 //Save Review
 func (review *Review) SaveReview(db *gorm.DB) (*Review, error) {
 
-	err := db.Debug().Create(&review).Error
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	err := db.WithContext(ctx).Debug().Create(&review).Error
 	if err != nil {
 		log.Println("error while saving review", err)
 		return &Review{}, err
@@ -32,7 +35,9 @@ func (review *Review) SaveReview(db *gorm.DB) (*Review, error) {
 func (review *Review) FindAllReviews(db *gorm.DB) (*[]Review, error) {
 
 	reviews := []Review{}
-	err := db.Debug().Model(&Review{}).Limit(100).Find(&reviews).Error
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	err := db.WithContext(ctx).Debug().Model(&Review{}).Limit(100).Find(&reviews).Error
 
 	if err != nil {
 		log.Println("Error while finding reviews")
@@ -45,7 +50,9 @@ func (review *Review) FindAllReviews(db *gorm.DB) (*[]Review, error) {
 //Find By Id
 func (review *Review) FindById(db *gorm.DB, R_id int64) (*Review, error) {
 
-	err := db.Debug().Model(&Review{}).Where("id = ?", R_id).Take(&review).Error
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	err := db.WithContext(ctx).Debug().Model(&Review{}).Where("id = ?", R_id).Take(&review).Error
 
 	if err != nil {
 		log.Println("error while geting review by id")
@@ -59,7 +66,9 @@ func (review *Review) FindById(db *gorm.DB, R_id int64) (*Review, error) {
 func (review *Review) FindByCustomerId(db *gorm.DB, C_id string) (*[]Review, error) {
 
 	reviews := []Review{}
-	err := db.Debug().Model(&Review{}).Where("customer_id = ?", C_id).Limit(100).Find(&reviews).Error
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	err := db.WithContext(ctx).Debug().Model(&Review{}).Where("customer_id = ?", C_id).Limit(100).Find(&reviews).Error
 
 	if err != nil {
 		log.Println("Error while finding reviews from a specific customer")
@@ -72,7 +81,9 @@ func (review *Review) FindByCustomerId(db *gorm.DB, C_id string) (*[]Review, err
 //update review
 func (review *Review) UpdateReview(db *gorm.DB, C_id int64) (*Review, error) {
 
-	db = db.Debug().Model(&Review{}).Where("id = ?", C_id).Take(&Review{}).UpdateColumns(
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	db = db.WithContext(ctx).Debug().Model(&Review{}).Where("id = ?", C_id).Take(&Review{}).UpdateColumns(
 		map[string]interface{}{
 			"customer_id": review.Customer_id,
 			"text":        review.Text,
@@ -80,7 +91,7 @@ func (review *Review) UpdateReview(db *gorm.DB, C_id int64) (*Review, error) {
 			"updated_at":  time.Now(),
 		},
 	)
-	err := db.Debug().Model(&Review{}).Where("id = ?", C_id).Take(&review).Error
+	err := db.WithContext(ctx).Debug().Model(&Review{}).Where("id = ?", C_id).Take(&review).Error
 	if err != nil {
 		return &Review{}, err
 	}
@@ -89,7 +100,9 @@ func (review *Review) UpdateReview(db *gorm.DB, C_id int64) (*Review, error) {
 
 //delete review
 func (review *Review) DeleteReview(db *gorm.DB, C_id int64) (int64, error) {
-	db = db.Debug().Model(&Review{}).Where("id = ?", C_id).Take(&Review{}).Delete(&Review{})
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	db = db.WithContext(ctx).Debug().Model(&Review{}).Where("id = ?", C_id).Take(&Review{}).Delete(&Review{})
 
 	if db.Error != nil {
 		return 0, db.Error

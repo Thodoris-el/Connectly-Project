@@ -12,6 +12,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
+/*
+This is The Customer Controller.
+*/
+
 //Create a customer
 func (server *Server) CreateCustomer(resp http.ResponseWriter, request *http.Request) {
 
@@ -150,7 +154,7 @@ func (server *Server) UpdateCustomer(resp http.ResponseWriter, request *http.Req
 	}
 }
 
-//Delet Customer
+//Delete Customer
 func (server *Server) DeleteCustomer(resp http.ResponseWriter, request *http.Request) {
 
 	vars := mux.Vars(request)

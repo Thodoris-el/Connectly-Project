@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"context"
 	"log"
 	"time"
 
@@ -21,7 +22,9 @@ type Template struct {
 //Save Template
 func (template *Template) SaveTemplate(db *gorm.DB) (*Template, error) {
 
-	err := db.Debug().Create(&template).Error
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	err := db.WithContext(ctx).Debug().Create(&template).Error
 	if err != nil {
 		log.Println("error while saving Template", err)
 		return &Template{}, err
@@ -34,7 +37,9 @@ func (template *Template) SaveTemplate(db *gorm.DB) (*Template, error) {
 func (template *Template) FindAllTemplates(db *gorm.DB) (*[]Template, error) {
 
 	templates := []Template{}
-	err := db.Debug().Model(&Template{}).Limit(100).Find(&templates).Error
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	err := db.WithContext(ctx).Debug().Model(&Template{}).Limit(100).Find(&templates).Error
 
 	if err != nil {
 		log.Println("Error while finding Templates")
@@ -47,7 +52,9 @@ func (template *Template) FindAllTemplates(db *gorm.DB) (*[]Template, error) {
 //Find By Id
 func (template *Template) FindById(db *gorm.DB, T_id int64) (*Template, error) {
 
-	err := db.Debug().Model(&Template{}).Where("id = ?", T_id).Take(&template).Error
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	err := db.WithContext(ctx).Debug().Model(&Template{}).Where("id = ?", T_id).Take(&template).Error
 
 	if err != nil {
 		log.Println("error while geting Template by id")
@@ -60,7 +67,9 @@ func (template *Template) FindById(db *gorm.DB, T_id int64) (*Template, error) {
 //Find Template from a specific language
 func (template *Template) FindByLanguage(db *gorm.DB, lang string) (*Template, error) {
 
-	err := db.Debug().Model(&Template{}).Where("language = ?", lang).Limit(100).Take(&template).Error
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	err := db.WithContext(ctx).Debug().Model(&Template{}).Where("language = ?", lang).Limit(100).Take(&template).Error
 
 	if err != nil {
 		log.Println("Error while finding reviews from a specific customer")
@@ -73,7 +82,9 @@ func (template *Template) FindByLanguage(db *gorm.DB, lang string) (*Template, e
 //update template
 func (template *Template) UpdateTemplate(db *gorm.DB, T_id int64) (*Template, error) {
 
-	db = db.Debug().Model(&Template{}).Where("id = ?", T_id).Take(&Template{}).UpdateColumns(
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	db = db.WithContext(ctx).Debug().Model(&Template{}).Where("id = ?", T_id).Take(&Template{}).UpdateColumns(
 		map[string]interface{}{
 			"placeholder":  template.Placeholder,
 			"title":        template.Title,
@@ -83,7 +94,8 @@ func (template *Template) UpdateTemplate(db *gorm.DB, T_id int64) (*Template, er
 			"updated_at":   time.Now(),
 		},
 	)
-	err := db.Debug().Model(&Review{}).Where("id = ?", T_id).Take(&template).Error
+
+	err := db.WithContext(ctx).Debug().Model(&Review{}).Where("id = ?", T_id).Take(&template).Error
 	if err != nil {
 		return &Template{}, err
 	}
@@ -92,7 +104,9 @@ func (template *Template) UpdateTemplate(db *gorm.DB, T_id int64) (*Template, er
 
 //delete template
 func (template *Template) DeleteTemplate(db *gorm.DB, T_id int64) (int64, error) {
-	db = db.Debug().Model(&Template{}).Where("id = ?", T_id).Take(&Template{}).Delete(&Template{})
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	db = db.WithContext(ctx).Debug().Model(&Template{}).Where("id = ?", T_id).Take(&Template{}).Delete(&Template{})
 
 	if db.Error != nil {
 		return 0, db.Error
