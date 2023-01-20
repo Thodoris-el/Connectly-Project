@@ -91,12 +91,14 @@ func (server *Server) HandleMessageTemplate(everyfbMess entity.MessagingType, co
 			//Get values from the review template
 			score := everyf.Questions.Myquestion1.Payload
 			text := everyf.Questions.Myquestion1.FollowUp.Payload
-			err := server.AddReview(sender, text, score)
+			product := new_conversation.Product
+			err := server.AddReview(sender, text, score, product)
 			if err != nil {
 				log.Println("error while creating review", err)
 				return "", err
 			}
 			new_conversation.Stage = "None"
+			new_conversation.Product = ""
 			_, err = new_conversation.UpdateConversation(server.DB, new_conversation.ID)
 			if err != nil {
 				log.Println("error while creating conversation")
@@ -202,7 +204,7 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 					return
 				}
 			}
-			//if user message via quick anser
+			//if user message via quick answer
 			if message.QuickReply.Payload != "" {
 				log.Println(message)
 				str, err := server.HandleMessengeQuickReply(message, *new_conversation, sender.ID)
@@ -226,6 +228,8 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 				//Buy is a trigger word
 				if strings.HasPrefix(message.Text, "Buy a ") {
 					new_conversation.Stage = "Buy"
+					prod := strings.Split(message.Text, "Buy a ")
+					new_conversation.Product = prod[len(prod)-1]
 					_, err = new_conversation.UpdateConversation(server.DB, new_conversation.ID)
 					if err != nil {
 						log.Println("error while creating conversation")
@@ -261,15 +265,16 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 						resp.Header().Add("action", str)
 
 					} else if new_conversation.Stage == "Review" {
+						err = server.AddReview(sender.ID, message.Text, "-1", new_conversation.Product)
+						if err != nil {
+							log.Println("error while creating database")
+							return
+						}
 						new_conversation.Stage = "None"
+						new_conversation.Product = ""
 						_, err = new_conversation.UpdateConversation(server.DB, new_conversation.ID)
 						if err != nil {
 							log.Println("error while creating conversation")
-							return
-						}
-						err = server.AddReview(sender.ID, message.Text, "-1")
-						if err != nil {
-							log.Println("error while creating database")
 							return
 						}
 						err = handleMessageWithoutQuickReply(sender.ID, "Thanks for the review!.")
@@ -292,15 +297,16 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 				} else {
 
 					if new_conversation.Stage == "Review" {
+						err = server.AddReview(sender.ID, message.Text, "-1", new_conversation.Product)
+						if err != nil {
+							log.Println("error while creating database")
+							return
+						}
 						new_conversation.Stage = "None"
+						new_conversation.Product = ""
 						_, err = new_conversation.UpdateConversation(server.DB, new_conversation.ID)
 						if err != nil {
 							log.Println("error while creating conversation")
-							return
-						}
-						err = server.AddReview(sender.ID, message.Text, "-1")
-						if err != nil {
-							log.Println("error while creating database")
 							return
 						}
 						if err != nil {
@@ -319,6 +325,7 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 
 						if strings.Contains(message.Text, "No") {
 							new_conversation.Stage = "None"
+							new_conversation.Product = ""
 							_, err = new_conversation.UpdateConversation(server.DB, new_conversation.ID)
 							if err != nil {
 								log.Println("error while creating conversation")
@@ -334,6 +341,7 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 
 						} else {
 							new_conversation.Stage = "None"
+							new_conversation.Product = ""
 							_, err = new_conversation.UpdateConversation(server.DB, new_conversation.ID)
 							if err != nil {
 								log.Println("error while creating conversation")
@@ -363,6 +371,13 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 				for _, everyAttachment := range attachment {
 					switch everyAttachment.Type {
 					case "template":
+						new_conversation.Stage = "None"
+						new_conversation.Product = ""
+						_, err = new_conversation.UpdateConversation(server.DB, new_conversation.ID)
+						if err != nil {
+							log.Println("error while creating conversation")
+							return
+						}
 						log.Println(sender, recipient, everyAttachment.Payload.Product.Title)
 						err = handleMessageWithoutQuickReply(sender.ID, "Didn't understand this! Tell us what product you want to buy")
 						if err != nil {
@@ -372,6 +387,13 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 						resp.Header().Add("action", "none")
 						return
 					default:
+						new_conversation.Stage = "None"
+						new_conversation.Product = ""
+						_, err = new_conversation.UpdateConversation(server.DB, new_conversation.ID)
+						if err != nil {
+							log.Println("error while creating conversation")
+							return
+						}
 						log.Println(sender, recipient, "image: ", everyAttachment.Payload.URL)
 						err = handleMessageWithoutQuickReply(sender.ID, "Didn't understand this! Tell us what product you want to buy")
 						if err != nil {

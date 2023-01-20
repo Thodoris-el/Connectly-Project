@@ -113,8 +113,30 @@ func (server *Server) GetReviewByCustomerId(resp http.ResponseWriter, request *h
 	}
 }
 
+//Get review by product
+func (server *Server) GetReviewByProduct(resp http.ResponseWriter, request *http.Request) {
+
+	vars := mux.Vars(request)
+	C_id := vars["product"]
+
+	review := entity.Review{}
+
+	reviewGet, err := review.FindByProduct(server.DB, C_id)
+	if err != nil {
+		http.Error(resp, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	resp.Header().Set("Content-Type", "application/json")
+	resp.WriteHeader(http.StatusOK)
+	err = json.NewEncoder(resp).Encode(reviewGet)
+	if err != nil {
+		log.Println(err)
+	}
+}
+
 //Add Review
-func (server *Server) AddReview(senderID, text, score string) error {
+func (server *Server) AddReview(senderID, text, score, product string) error {
 
 	var err error
 	new_review := entity.Review{}
@@ -122,6 +144,7 @@ func (server *Server) AddReview(senderID, text, score string) error {
 	//Add values to fields
 	new_review.Customer_id = senderID
 	new_review.Text = text
+	new_review.Product = product
 	new_review.Score, err = strconv.Atoi(score)
 	if err != nil {
 		log.Println("error converting score to integer")

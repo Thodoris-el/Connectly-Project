@@ -61,6 +61,7 @@ Basic functions to *CREATE*, *UPDATE*, *DELETE* a customer. Also we have impleme
 - ID: each conversation has a unique ID
 - Facebook_id: The facebook ID of the customer
 - Stage: The stage of the conversation
+- Product: the product that the customer bought
 - CreatedAt: Time when the customer was created
 - UpdatedAt: Time when the customer was last updated
 
@@ -87,6 +88,7 @@ Each customer has a unique conversation. The satge of the conversation guides us
 - Customer_id: The facebook ID of the customer
 - Text: The text of the review
 - Score: The score of the review
+- Product: The product that is reviewed
 - CreatedAt: Time when the customer was created
 - UpdatedAt: Time when the customer was last updated
 
@@ -96,6 +98,7 @@ Basic functions to *CREATE*, *UPDATE*, *DELETE* a conversation. Also we have imp
 - Get by ID
 - Get All
 - Get by facebook id
+- Get by product
 
 #### Template
 

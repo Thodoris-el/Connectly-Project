@@ -39,6 +39,7 @@ func (server *Server) startRoutes() {
 	server.Router.HandleFunc("/review", server.GetReviews).Methods("GET")
 	server.Router.HandleFunc("/review/{id}", server.GetReviewById).Methods("GET")
 	server.Router.HandleFunc("/review/customer/{customer_id}", server.GetReviewByCustomerId).Methods("GET")
+	server.Router.HandleFunc("/review/product/{product}", server.GetReviewByProduct).Methods("GET")
 	server.Router.HandleFunc("/review/{id}", server.UpdateReview).Methods("PUT")
 	server.Router.HandleFunc("/review/{id}", server.DeleteReview).Methods("DELETE")
 

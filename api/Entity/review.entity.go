@@ -13,6 +13,7 @@ type Review struct {
 	Customer_id string `gorm:"not null;" json:"customer_id"`
 	Text        string `gorm:"size:2550;not null;" json:"text"`
 	Score       int    `gorm:"default: -1" json:"score"`
+	Product     string `gorm:"default:None" json:"product"`
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
@@ -78,6 +79,22 @@ func (review *Review) FindByCustomerId(db *gorm.DB, C_id string) (*[]Review, err
 	return &reviews, err
 }
 
+//Find All Reviews for a specific product
+func (review *Review) FindByProduct(db *gorm.DB, prod string) (*[]Review, error) {
+
+	reviews := []Review{}
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	err := db.WithContext(ctx).Debug().Model(&Review{}).Where("product = ?", prod).Limit(100).Find(&reviews).Error
+
+	if err != nil {
+		log.Println("Error while finding reviews for a specific product")
+		return &[]Review{}, err
+	}
+
+	return &reviews, err
+}
+
 //update review
 func (review *Review) UpdateReview(db *gorm.DB, C_id int64) (*Review, error) {
 
@@ -88,6 +105,7 @@ func (review *Review) UpdateReview(db *gorm.DB, C_id int64) (*Review, error) {
 			"customer_id": review.Customer_id,
 			"text":        review.Text,
 			"score":       review.Score,
+			"product":     review.Product,
 			"updated_at":  time.Now(),
 		},
 	)
