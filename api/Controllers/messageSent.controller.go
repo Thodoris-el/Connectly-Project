@@ -123,7 +123,7 @@ func handleMessageWithoutQuickReply(senderId, message string) error {
 	return nil
 }
 
-func SendReviewTemplate(senderId string, template *entity.Template) error {
+func SendReviewTemplate(senderId, product string, template *entity.Template) error {
 
 	followUp := entity.FollowUpType{
 		Type:        "free_form",
@@ -152,7 +152,7 @@ func SendReviewTemplate(senderId string, template *entity.Template) error {
 	}
 	payload := entity.PayloadTypeSendTemplate{
 		Template_Type:    "customer_feedback",
-		Title:            "Review Product",
+		Title:            "Review " + product,
 		Subtitle:         "Let us know about the product",
 		Button_Title:     "Review Product",
 		Feedbavk_Screens: feedbacks,

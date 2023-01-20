@@ -57,7 +57,7 @@ func (server *Server) HandleMessengeQuickReply(message entity.MessageType, new_c
 			return "review", err
 		}
 		//send the review
-		err = SendReviewTemplate(sender, templateGet)
+		err = SendReviewTemplate(sender, new_conversation.Product, templateGet)
 		if err != nil {
 			log.Println(err.Error())
 			return "", err
@@ -116,7 +116,7 @@ func (server *Server) HandleMessageTemplate(everyfbMess entity.MessagingType, co
 	return "", errors.New("invalid stage for review")
 }
 
-func (server *Server) SendTemplate(sender string) (string, error) {
+func (server *Server) SendTemplate(sender, product string) (string, error) {
 	//Find customer that send the message
 	customer := entity.Customer{}
 	customerGet, err := customer.FindByFacebookId(server.DB, sender)
@@ -139,7 +139,7 @@ func (server *Server) SendTemplate(sender string) (string, error) {
 		}
 		return "review", err
 	}
-	err = SendReviewTemplate(sender, templateGet)
+	err = SendReviewTemplate(sender, product, templateGet)
 	if err != nil {
 		log.Println(err.Error())
 		return "", err
@@ -257,7 +257,7 @@ func (server *Server) HandleMessenger(resp http.ResponseWriter, request *http.Re
 							log.Println(err.Error())
 							return
 						}
-						str, err := server.SendTemplate(sender.ID)
+						str, err := server.SendTemplate(sender.ID, new_conversation.Product)
 						if err != nil {
 							log.Println(err)
 							return

@@ -33,7 +33,9 @@ func Run() {
 	Db_host := os.Getenv("DB_HOST")
 	Db_port := os.Getenv("DB_PORT")
 	Db_name := os.Getenv("DB_NAME")
+	Dsn_Name := os.Getenv("DSN_NAME")
+	Dsn_Password := os.Getenv("DSN_PASSWORD")
 
-	server.Initialize(Db_user, Db_password, Db_host, Db_name, Db_port)
+	server.Initialize(Db_user, Db_password, Db_host, Db_name, Db_port, Dsn_Name, Dsn_Password)
 	server.Run()
 }

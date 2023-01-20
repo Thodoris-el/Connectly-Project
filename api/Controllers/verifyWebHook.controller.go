@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 	"os"
 )
@@ -14,7 +14,7 @@ func (server *Server) VerifyWebhook(resp http.ResponseWriter, request *http.Requ
 		token := request.URL.Query().Get("hub.verify_token")
 		if mode != "" && token != "" {
 			if token == secretKey && mode == "subscribe" {
-				fmt.Println("WEBHOOK_VERIFIED")
+				log.Println("WEBHOOK_VERIFIED")
 				resp.WriteHeader(200)
 				resp.Write([]byte(challenge))
 				return
