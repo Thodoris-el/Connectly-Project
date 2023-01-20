@@ -19,8 +19,8 @@
 
 ## Examples
 
-- Triger Word **Buy**
-- Send a message in your app, with this form:  **Buy** a <your_product>.
+- Triger Word **Buy** **a**
+- Send a message in your app, with this form:  **Buy** **a** <your_product>.
 - The chatbot will ask you for verification
 - if you say yes it will send you a Review Template
 
