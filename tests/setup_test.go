@@ -63,11 +63,13 @@ func refreshTables() {
 
 func createATemplate() (entity.Template, error) {
 	template := entity.Template{
-		Title:       "How would you rate our product?",
-		Placeholder: "Give additional feedback",
-		Language:    "eng",
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		Title:        "How would you rate our product?",
+		Placeholder:  "Give additional feedback",
+		Subtitle:     "Let us know about our product?",
+		Button_Title: "Review",
+		Language:     "eng",
+		CreatedAt:    time.Now(),
+		UpdatedAt:    time.Now(),
 	}
 	err := server.DB.Model(&entity.Template{}).Create(&template).Error
 	if err != nil {
