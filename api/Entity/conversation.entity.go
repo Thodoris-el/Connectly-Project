@@ -13,6 +13,7 @@ import (
 type Conversation struct {
 	ID          int64  `gorm:"primary_key;auto_increment" json:"id"`
 	Facebook_id string `gorm:"not null;unique;" json:"facebook_id"`
+	Type        string `gorm:"default: None" json:"type"`
 	Stage       string `gorm:"default:None" json:"stage"`
 	Product     string `gorm:"default:None" json:"product"`
 	CreatedAt   time.Time
@@ -89,6 +90,7 @@ func (conversation *Conversation) UpdateConversation(db *gorm.DB, C_id int64) (*
 	defer cancel()
 	db = db.WithContext(ctx).Debug().Model(&Conversation{}).Where("id = ?", C_id).Take(&Conversation{}).UpdateColumns(
 		map[string]interface{}{
+			"type":       conversation.Type,
 			"stage":      conversation.Stage,
 			"product":    conversation.Product,
 			"updated_at": time.Now(),

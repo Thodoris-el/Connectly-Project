@@ -18,6 +18,7 @@ type Server struct {
 
 //Initialize Database
 func (server *Server) Initialize(Db_user, Db_password, Db_host, Db_name, Db_port, Dsn_Name, Dsn_Password string) {
+
 	var err error
 
 	//use for a local database -> uncomment the below line

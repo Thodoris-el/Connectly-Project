@@ -12,6 +12,18 @@ import (
 	"github.com/gorilla/mux"
 )
 
+/*
+This is the review contoller
+Implements:
+-> Create a revies
+-> Get All reviews
+-> Get review by ID
+-> Get review by Facebook ID
+-> Get review by product
+-> Update customer
+-> Delete customer
+*/
+
 //Create a Review
 func (server *Server) CreateReview(resp http.ResponseWriter, request *http.Request) {
 

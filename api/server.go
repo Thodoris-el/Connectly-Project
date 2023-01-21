@@ -36,6 +36,8 @@ func Run() {
 	Dsn_Name := os.Getenv("DSN_NAME")
 	Dsn_Password := os.Getenv("DSN_PASSWORD")
 
+	//Initialize DB -> connect and migrate
 	server.Initialize(Db_user, Db_password, Db_host, Db_name, Db_port, Dsn_Name, Dsn_Password)
+	//run server
 	server.Run()
 }

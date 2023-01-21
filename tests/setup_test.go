@@ -207,6 +207,7 @@ func createTwoCustomers() ([]entity.Customer, error) {
 func createAConversation() (entity.Conversation, error) {
 	conversation := entity.Conversation{
 		Facebook_id: "6706612322695175",
+		Type:        "Review",
 		Stage:       "None",
 		Product:     "",
 		CreatedAt:   time.Now(),
@@ -224,6 +225,7 @@ func createTwoConversations() ([]entity.Conversation, error) {
 	conversations := []entity.Conversation{
 		{
 			Facebook_id: "6706612322695175",
+			Type:        "Review",
 			Stage:       "None",
 			Product:     "",
 			CreatedAt:   time.Now(),
@@ -231,6 +233,7 @@ func createTwoConversations() ([]entity.Conversation, error) {
 		},
 		{
 			Facebook_id: "8006612322695175",
+			Type:        "",
 			Stage:       "None",
 			Product:     "",
 			CreatedAt:   time.Now(),

@@ -14,6 +14,13 @@ import (
 
 /*
 This is The Customer Controller.
+Implements:
+-> Create a customer
+-> Get All customers
+-> Get customer by ID
+-> Get customer by Facebook ID
+-> Update customer
+-> Delete customer
 */
 
 //Create a customer
@@ -35,6 +42,7 @@ func (server *Server) CreateCustomer(resp http.ResponseWriter, request *http.Req
 
 	customer.CreatedAt = time.Now()
 	customer.UpdatedAt = time.Now()
+
 	customerCreated, err := customer.SaveCustomer(server.DB)
 
 	if err != nil {

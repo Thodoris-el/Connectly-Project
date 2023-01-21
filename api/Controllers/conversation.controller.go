@@ -15,10 +15,13 @@ import (
 /*
 This is The Conversation Controller.
 Every Customer that has sent us a message, has a conversation.
-The Conversation Stage guides us to the message that the chatbot will send
-if "None" -> we hear only the trigger word "Buy"
-if "Buy" -> prev msg contains the word "Buy"
-if "Review" -> we get "Yes" in prev message and we have sent a revies
+Implements:
+-> Create a conversation
+-> Get All conversations
+-> Get conversation by ID
+-> Get conversation by Facebook ID
+-> Update conversation
+-> Delete conversation
 */
 
 //Create Conversation
@@ -37,6 +40,7 @@ func (server *Server) CreateConversation(resp http.ResponseWriter, request *http
 		http.Error(resp, err.Error(), http.StatusBadRequest)
 		return
 	}
+
 	conversation.CreatedAt = time.Now()
 	conversation.UpdatedAt = time.Now()
 

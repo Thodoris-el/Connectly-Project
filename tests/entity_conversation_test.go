@@ -13,6 +13,7 @@ func TestSaveConversation(t *testing.T) {
 
 	testConversation := entity.Conversation{
 		Facebook_id: "6706612322695175",
+		Type:        "Review",
 		Stage:       "None",
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
@@ -25,7 +26,7 @@ func TestSaveConversation(t *testing.T) {
 		return
 	}
 
-	if !(testConversation.Facebook_id == savedConversation.Facebook_id && testConversation.Stage == savedConversation.Stage) {
+	if !(testConversation.Facebook_id == savedConversation.Facebook_id && testConversation.Stage == savedConversation.Stage && testConversation.Type == savedConversation.Type) {
 		t.Errorf("wrong values")
 	}
 }
@@ -70,7 +71,7 @@ func TestFindConversationByID(t *testing.T) {
 		return
 	}
 
-	if !(testConversation.Facebook_id == getC.Facebook_id && testConversation.Stage == getC.Stage) {
+	if !(testConversation.Facebook_id == getC.Facebook_id && testConversation.Stage == getC.Stage && testConversation.Type == getC.Type) {
 		t.Errorf("wrong values")
 	}
 }
@@ -92,7 +93,7 @@ func TestFindConversationByCustomerID(t *testing.T) {
 		return
 	}
 
-	if !(testConversation.Facebook_id == getC.Facebook_id && testConversation.Stage == getC.Stage) {
+	if !(testConversation.Facebook_id == getC.Facebook_id && testConversation.Stage == getC.Stage && testConversation.Type == getC.Type) {
 		t.Errorf("wrong values")
 	}
 }
@@ -115,7 +116,7 @@ func TestUpdateConversation(t *testing.T) {
 		return
 	}
 
-	if !(testConversation.Facebook_id == getC.Facebook_id && testConversation.Stage == getC.Stage) {
+	if !(testConversation.Facebook_id == getC.Facebook_id && testConversation.Stage == getC.Stage && testConversation.Type == getC.Type) {
 		t.Errorf("wrong values")
 	}
 }

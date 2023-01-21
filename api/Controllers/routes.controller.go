@@ -6,17 +6,16 @@ import (
 
 func (server *Server) startRoutes() {
 
-	//home route -> just responds that the server is working
+	//home route -> just responds that the server is working -> used for healthcheck
 	server.Router.HandleFunc("/", func(resp http.ResponseWriter, request *http.Request) {
 		resp.WriteHeader(http.StatusOK)
 		resp.Write([]byte("server working"))
 	}).Methods("GET")
 
-	//WebHook Verification
-	server.Router.HandleFunc("/webhook", server.VerifyWebhook).Methods("GET")
-
+	//Facebook WebHook Verification
+	server.Router.HandleFunc("/facebook/webhook", server.VerifyWebhook).Methods("GET")
 	//Get Messasges From FB
-	server.Router.HandleFunc("/webhook", server.HandleMessenger).Methods("POST")
+	server.Router.HandleFunc("/facebook/webhook", server.HandleReceivedFacebookMessage).Methods("POST")
 
 	//Users endpoints
 	server.Router.HandleFunc("/customer", server.CreateCustomer).Methods("POST")
@@ -34,7 +33,7 @@ func (server *Server) startRoutes() {
 	server.Router.HandleFunc("/conversation/{id}", server.UpdateConversation).Methods("PUT")
 	server.Router.HandleFunc("/conversation/{id}", server.DeleteConversation).Methods("DELETE")
 
-	//Reviews endpoint
+	//Reviews endpoints
 	server.Router.HandleFunc("/review", server.CreateReview).Methods("POST")
 	server.Router.HandleFunc("/review", server.GetReviews).Methods("GET")
 	server.Router.HandleFunc("/review/{id}", server.GetReviewById).Methods("GET")

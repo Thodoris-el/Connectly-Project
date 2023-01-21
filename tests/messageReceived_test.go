@@ -31,7 +31,7 @@ func TestHandleMessanger(t *testing.T) {
 		r.Header.Add("Content-Type", "application/json")
 		r.Header.Add("X-Hub-Signature", "sha1=a502207038bb5692cb665062846716fbc7d7951a")
 		r.Header.Add("X-Hub-Signature", "sha256=691990bf36efdb92312b367e252203d53e6fd4ba19666e74081bdadd9770188d")
-		server.HandleMessenger(w, r)
+		server.HandleReceivedFacebookMessage(w, r)
 		res := w.Result()
 
 		if res.Header.Get("action") != resmsg[i] {
@@ -50,7 +50,7 @@ func TestHandleMessanger(t *testing.T) {
 		r.Header.Add("Content-Type", "application/json")
 		r.Header.Add("X-Hub-Signature", "sha1=a502207038bb5692cb665062846716fbc7d7951a")
 		r.Header.Add("X-Hub-Signature", "sha256=691990bf36efdb92312b367e252203d53e6fd4ba19666e74081bdadd9770188d")
-		server.HandleMessenger(w, r)
+		server.HandleReceivedFacebookMessage(w, r)
 		res := w.Result()
 
 		if res.Header.Get("action") != resmsg[i] {

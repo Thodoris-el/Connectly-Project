@@ -12,7 +12,18 @@ import (
 	"github.com/gorilla/mux"
 )
 
-//Create Template from endpoint if needed
+/*
+This is the Template Controller
+Implements:
+-> Create a template
+-> Get All templates
+-> Get customer by ID
+-> Get template by language
+-> Update customer
+-> Delete customer
+*/
+
+//Create Template
 func (server *Server) CreateTemplate(resp http.ResponseWriter, request *http.Request) {
 
 	body, err := io.ReadAll(request.Body)

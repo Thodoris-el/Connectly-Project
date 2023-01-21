@@ -22,7 +22,7 @@
 - Triger Word **Buy** **a**
 - Send a message in your app, with this form:  **Buy** **a** <your_product>.
 - The chatbot will ask you for verification
-- if you say yes it will send you a Review Template
+- If you answer yes, it will send you a Review Template
 
 ## Examples With Images
 
@@ -60,6 +60,7 @@ Basic functions to *CREATE*, *UPDATE*, *DELETE* a customer. Also we have impleme
 
 - ID: each conversation has a unique ID
 - Facebook_id: The facebook ID of the customer
+- Type: The type of the conversation that has been started (for now the only supported type is the review)
 - Stage: The stage of the conversation
 - Product: the product that the customer bought
 - CreatedAt: Time when the customer was created
@@ -74,8 +75,9 @@ Basic functions to *CREATE*, *UPDATE*, *DELETE* a conversation. Also we have imp
 
 ##### Usage of the Conversation Entity
 
-Each customer has a unique conversation. The satge of the conversation guides us to the type of message we will send. There are three  stages:
+Each customer has a unique conversation. The type of the conversation shows to what the template of the conversation should be. The satge of the conversation guides us to the type of message we will send. There are three  stages:
 
+- The 
 - *None*: We wait for the trigger word.
 - *Buy*: We heard the trigger word and asked for verification.
 - *Review*: We get Yes in the verification, we send the review and we wait for the user to send it back to us.
