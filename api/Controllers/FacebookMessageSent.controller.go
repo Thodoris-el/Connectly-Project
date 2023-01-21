@@ -45,7 +45,7 @@ func (server *Server) SendTemplate(sender, product string) (string, error) {
 }
 
 // sends messages with quick reply
-func handleMessageWithQuickReply(senderId, message, conType string) error {
+func handleMessageWithQuickReplyReview(senderId, message, conType string) error {
 	//if no message return error
 	if len(message) == 0 {
 		log.Println("No message found.")

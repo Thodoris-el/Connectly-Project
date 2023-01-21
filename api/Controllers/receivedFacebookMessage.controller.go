@@ -37,7 +37,7 @@ func (server *Server) StartReviewConversation(sender, message string, new_conver
 		return err
 	}
 	//send verification msg with quick reply
-	err = handleMessageWithQuickReply(sender, "Are you sure?", new_conversation.Type)
+	err = handleMessageWithQuickReplyReview(sender, "Are you sure?", new_conversation.Type)
 	if err != nil {
 		log.Println(err.Error())
 		return err
